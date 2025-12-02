@@ -1,0 +1,14 @@
+Admin Panel Files ( c:\xampp\htdocs\emps\admin_panel\documents\ ):
+
+1. manage_templates.php - Main dashboard for template management
+2. assign_template.php - Assign templates to employees
+3. view_template.php - View template details and statistics
+4. toggle_status.php - Handle template status changes
+5. download_template.php - Handle template downloads
+User Panel Files ( c:\xampp\htdocs\emps\user_panel\documents\ ):
+
+1. documents.php - Main list of all documents (pending & signed)
+2. sign_document.php - Interface for signing documents
+3. view_document.php - View assigned document details
+4. pending_signatures.php - List of documents pending signature
+5. signed_documents.php - List of already signed documents

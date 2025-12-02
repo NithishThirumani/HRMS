@@ -1,0 +1,66 @@
+/* Metallic Theme Styles */
+:root {
+    --metallic-light: #e8e9ea;
+    --metallic-medium: #b8b9bc;
+    --metallic-dark: #7a7c80;
+    --metallic-gradient: linear-gradient(145deg, #e8e9ea, #b8b9bc);
+}
+
+body {
+    background: linear-gradient(135deg, #f5f6f8, #e0e1e3);
+}
+
+.card {
+    background: var(--metallic-gradient);
+    border: none;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.2),
+                -5px -5px 15px rgba(255,255,255,0.7);
+    border-radius: 10px;
+}
+
+.card-header {
+    background: linear-gradient(145deg, #d1d2d4, #c1c2c4);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-primary {
+    background: linear-gradient(145deg, #4e73df, #3756a5);
+    border: none;
+    box-shadow: 3px 3px 7px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(145deg, #3756a5, #4e73df);
+    transform: translateY(-2px);
+}
+
+.table {
+    background: rgba(255,255,255,0.9);
+    border-radius: 8px;
+}
+
+.table thead th {
+    background: linear-gradient(145deg, #d1d2d4, #c1c2c4);
+    border-bottom: none;
+}
+
+.form-control {
+    background: #f8f9fa;
+    border: 1px solid var(--metallic-medium);
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
+}
+
+.modal-content {
+    background: var(--metallic-gradient);
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+
+.badge {
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+}
+
+.scroll-to-top {
+    background: linear-gradient(145deg, #4e73df, #3756a5);
+    box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
+}

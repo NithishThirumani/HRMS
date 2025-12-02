@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Software Plan Comparison</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(108, 117, 125, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #495057;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #4a6fa5;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .checkmark {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        .cross {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .plan-header {
+            background-color: #3a506b;
+            color: white;
+        }
+        /* New Collapsible Styles */
+        .category-header {
+            cursor: pointer;
+            background-color: #e9ecef;
+            transition: background-color 0.3s;
+        }
+        .category-header:hover {
+            background-color: #dee2e6;
+        }
+        .category-header td::after {
+            content: '▼';
+            float: right;
+            margin-right: 15px;
+            transition: transform 0.3s;
+        }
+        .category-header.collapsed td::after {
+            transform: rotate(-90deg);
+        }
+        .collapsible {
+            transition: all 0.3s ease;
+            display: table-row;
+            max-height: 1000px;
+            opacity: 1;
+        }
+        .collapsible.hidden {
+            max-height: 0;
+            opacity: 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HR Software Plan Comparison</h1>
+        <table>
+            <thead>
+                <tr class="plan-header">
+                    <th>Feature Category</th>
+                    <th>Ignite Plan (Free Starter)</th>
+                    <th>Ascend Plan (Essentials)</th>
+                    <th>Momentum Plan (Advanced)</th>
+                    <th>Zenith Plan (Enterprise)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="category-header">
+                    <td><strong>Core HR & Employee Info</strong></td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                </tr>
+                <tr class="collapsible">
+                    <td>Centralized Employee Database</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                </tr>
+                <tr class="collapsible">
+                    <td>Organizational Chart</td>
+                    <td class="cross">✖</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                </tr>
+                <tr class="collapsible">
+                    <td>Probation Period Tracking</td>
+                    <td class="cross">✖</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔ (Automated Alerts)</td>
+                </tr>
+
+                <tr class="category-header">
+                    <td><strong>Onboarding & Offboarding</strong></td>
+                    <td class="cross">✖</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔ (Customizable Workflows)</td>
+                </tr>
+                <tr class="collapsible">
+                    <td>Digital Onboarding Forms</td>
+                    <td class="cross">✖</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                </tr>
+                <tr class="collapsible">
+                    <td>Exit Management</td>
+                    <td class="cross">✖</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔ (Multi-Department Clearance)</td>
+                </tr>
+
+                <tr class="category-header">
+                    <td><strong>Attendance & Leave</strong></td>
+                    <td class="cross">✖</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔ (Geo-Fencing, Shift Management, WFH)</td>
+                </tr>
+                <tr class="collapsible">
+                    <td>Real-Time Attendance Tracking</td>
+                    <td class="cross">✖</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                </tr>
+                <tr class="collapsible">
+                    <td>Leave Management</td>
+                    <td class="cross">✖</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔ (Automated & Customizable)</td>
+                </tr>
+
+                <tr class="category-header">
+                    <td><strong>Reports & Analytics</strong></td>
+                    <td class="cross">✖</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔ (Customizable Dashboards)</td>
+                </tr>
+                <tr class="collapsible">
+                    <td>HR Reports</td>
+                    <td class="cross">✖</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                </tr>
+                <tr class="collapsible">
+                    <td>Audit Logs</td>
+                    <td class="cross">✖</td>
+                    <td class="cross">✖</td>
+                    <td class="checkmark">✔</td>
+                    <td class="checkmark">✔</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const headers = document.querySelectorAll('.category-header');
+            
+            headers.forEach(header => {
+                // Collapse all categories by default
+                let currentRow = header.nextElementSibling;
+                while(currentRow && currentRow.classList.contains('collapsible')) {
+                    currentRow.classList.add('hidden');
+                    currentRow = currentRow.nextElementSibling;
+                }
+                header.classList.add('collapsed');
+
+                header.addEventListener('click', function() {
+                    this.classList.toggle('collapsed');
+                    let currentRow = this.nextElementSibling;
+                    
+                    while(currentRow && currentRow.classList.contains('collapsible')) {
+                        currentRow.classList.toggle('hidden');
+                        currentRow = currentRow.nextElementSibling;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

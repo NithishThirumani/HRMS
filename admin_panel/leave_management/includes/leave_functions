@@ -1,0 +1,183 @@
+<?php
+
+/**
+ * Get employee details including their role and department
+ */
+function getEmployeeDetails($emp_id) {
+    global $con;
+    $query = "SELECT e.*, d.name as department_name, r.role_name, r.can_recommend, r.can_approve 
+              FROM employees e 
+              JOIN departments d ON e.department_id = d.id 
+              JOIN roles r ON e.new_role_id = r.role_code 
+              WHERE e.eid = ?";
+    
+    $stmt = $con->prepare($query);
+    $stmt->bind_param("s", $emp_id);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc();
+}
+
+/**
+ * Get employee's leave balances for all leave types
+ */
+function getLeaveBalances($emp_id) {
+    global $con;
+    $query = "CALL GetEmployeeLeaveBalance(?)";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param("s", $emp_id);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
+/**
+ * Calculate working days between two dates (excluding weekends)
+ */
+function calculateLeaveDays($start_date, $end_date) {
+    $start = new DateTime($start_date);
+    $end = new DateTime($end_date);
+    $days = 0;
+    
+    while ($start <= $end) {
+        if ($start->format('N') < 6) { // Skip Saturday (6) and Sunday (7)
+            $days++;
+        }
+        $start->modify('+1 day');
+    }
+    
+    return $days;
+}
+
+/**
+ * Check if employee has sufficient leave balance
+ */
+function hasEnoughLeaveBalance($emp_id, $leave_type, $requested_days) {
+    $balances = getLeaveBalances($emp_id);
+    foreach ($balances as $balance) {
+        if ($balance['leave_type'] === $leave_type) {
+            return $balance['available_days'] >= $requested_days;
+        }
+    }
+    return false;
+}
+
+/**
+ * Get approval workflow for an employee
+ */
+function getApprovalWorkflow($emp_id) {
+    global $con;
+    
+    // Get employee's department and role level
+    $query = "SELECT e.department_id, r.role_level 
+              FROM employees e 
+              JOIN roles r ON e.new_role_id = r.role_code 
+              WHERE e.eid = ?";
+              
+    $stmt = $con->prepare($query);
+    $stmt->bind_param("s", $emp_id);
+    $stmt->execute();
+    $employee = $stmt->get_result()->fetch_assoc();
+    
+    // Get approval sequence
+    $query = "SELECT ar.role_id, ar.workflow_level 
+              FROM approval_routes ar 
+              WHERE ar.department_id = ? 
+              ORDER BY ar.workflow_level ASC";
+              
+    $stmt = $con->prepare($query);
+    $stmt->bind_param("i", $employee['department_id']);
+    $stmt->execute();
+    $approvers = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    
+    return [
+        'first_approver' => $approvers[0]['role_id'],
+        'workflow' => $approvers
+    ];
+}
+
+/**
+ * Get next approver in workflow
+ */
+function getNextApprover($emp_id, $current_role) {
+    $workflow = getApprovalWorkflow($emp_id);
+    $current_level = null;
+    
+    foreach ($workflow['workflow'] as $index => $approver) {
+        if ($approver['role_id'] === $current_role) {
+            $current_level = $index;
+            break;
+        }
+    }
+    
+    if ($current_level !== null && isset($workflow['workflow'][$current_level + 1])) {
+        return $workflow['workflow'][$current_level + 1]['role_id'];
+    }
+    
+    return null;
+}
+
+/**
+ * Send email notifications
+ */
+function sendLeaveNotifications($approver_role, $emp_id, $leave_id) {
+    global $con;
+    
+    // Get approver emails
+    $query = "SELECT e.email, e.full_name 
+              FROM employees e 
+              WHERE e.new_role_id = ?";
+              
+    $stmt = $con->prepare($query);
+    $stmt->bind_param("s", $approver_role);
+    $stmt->execute();
+    $approvers = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    
+    // Get leave details
+    $leave = getLeaveDetails($leave_id);
+    
+    foreach ($approvers as $approver) {
+        $to = $approver['email'];
+        $subject = "Leave Request Pending Approval - #$leave_id";
+        $message = "Dear {$approver['full_name']},\n\n";
+        $message .= "A new leave request requires your attention:\n";
+        $message .= "Employee: {$leave['employee_name']}\n";
+        $message .= "Leave Type: {$leave['type_of_leave']}\n";
+        $message .= "Duration: {$leave['start_date']} to {$leave['end_date']}\n";
+        $message .= "Total Days: {$leave['total_days']}\n\n";
+        $message .= "Please login to the system to approve or reject this request.";
+        
+        mail($to, $subject, $message);
+    }
+}
+
+/**
+ * Get leave request details
+ */
+function getLeaveDetails($leave_id) {
+    global $con;
+    $query = "SELECT l.*, e.full_name as employee_name 
+              FROM leaves l 
+              JOIN employees e ON l.emp_id = e.eid 
+              WHERE l.id = ?";
+              
+    $stmt = $con->prepare($query);
+    $stmt->bind_param("i", $leave_id);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc();
+}
+
+/**
+ * Check if user is recommender or approver
+ */
+function isRecommenderOrApprover() {
+    global $con;
+    $query = "SELECT r.can_recommend, r.can_approve 
+              FROM roles r 
+              WHERE r.role_code = ?";
+              
+    $stmt = $con->prepare($query);
+    $stmt->bind_param("s", $_SESSION['role']);
+    $stmt->execute();
+    $role = $stmt->get_result()->fetch_assoc();
+    
+    return $role['can_recommend'] || $role['can_approve'];
+}

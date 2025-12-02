@@ -1,0 +1,61 @@
+[2025-03-15 12:17:38] Connection attempt made
+[2025-03-15 12:17:38] Database connected successfully
+[2025-03-15 12:17:38] Executing query: SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department != '' ORDER BY department
+[2025-03-15 12:17:38] Query successful. Found 3 departments
+[2025-03-15 12:17:38] Department found: HR
+[2025-03-15 12:17:38] Department found: IT
+[2025-03-15 12:17:38] Department found: Marketing
+[2025-03-15 12:19:22] Connection attempt made
+[2025-03-15 12:19:22] Database connected successfully
+[2025-03-15 12:19:22] Executing query: SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department != '' ORDER BY department
+[2025-03-15 12:19:22] Query successful. Found 3 departments
+[2025-03-15 12:19:22] Department found: HR
+[2025-03-15 12:19:22] Department found: IT
+[2025-03-15 12:19:22] Department found: Marketing
+[2025-03-15 12:19:22] Starting to build select options
+[2025-03-15 12:19:22] Number of rows before building options: 1
+[2025-03-15 12:20:11] Connection attempt made
+[2025-03-15 12:20:11] Database connected successfully
+[2025-03-15 12:20:11] Executing query: SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department != '' ORDER BY department
+[2025-03-15 12:20:11] Query successful. Found 3 departments
+[2025-03-15 12:20:11] Department found: HR
+[2025-03-15 12:20:11] Department found: IT
+[2025-03-15 12:20:11] Department found: Marketing
+[2025-03-15 12:20:11] Starting to build select options
+[2025-03-15 12:21:02] Connection attempt made
+[2025-03-15 12:21:02] Database connected successfully
+[2025-03-15 12:21:02] Executing query: SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department != '' ORDER BY department
+[2025-03-15 12:21:02] Query successful. Found 3 departments
+[2025-03-15 12:21:02] Department found: HR
+[2025-03-15 12:21:02] Department found: IT
+[2025-03-15 12:21:02] Department found: Marketing
+[2025-03-15 12:21:02] Starting to build select options
+[2025-03-15 12:21:02] Number of rows before building options: 1
+[2025-03-15 12:22:36] Connection attempt made
+[2025-03-15 12:22:36] Database connected successfully
+[2025-03-15 12:22:36] Executing query: SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department != '' ORDER BY department
+[2025-03-15 12:22:36] Query successful. Found 3 departments
+[2025-03-15 12:22:36] Department found: HR
+[2025-03-15 12:22:36] Department found: IT
+[2025-03-15 12:22:36] Department found: Marketing
+[2025-03-15 12:23:44] Connection attempt made
+[2025-03-15 12:23:44] Database connected successfully
+[2025-03-15 12:23:44] Executing query: SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department != '' ORDER BY department
+[2025-03-15 12:23:44] Query successful. Found 3 departments
+[2025-03-15 12:23:44] Department found: HR
+[2025-03-15 12:23:44] Department found: IT
+[2025-03-15 12:23:44] Department found: Marketing
+[2025-03-15 12:25:07] Connection attempt made
+[2025-03-15 12:25:07] Database connected successfully
+[2025-03-15 12:25:07] Executing query: SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department != '' ORDER BY department
+[2025-03-15 12:25:07] Query successful. Found 3 departments
+[2025-03-15 12:25:07] Department found: HR
+[2025-03-15 12:25:07] Department found: IT
+[2025-03-15 12:25:07] Department found: Marketing
+[2025-03-15 12:26:28] Connection attempt made
+[2025-03-15 12:26:28] Database connected successfully
+[2025-03-15 12:26:28] Executing query: SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department != '' ORDER BY department
+[2025-03-15 12:26:28] Query successful. Found 3 departments
+[2025-03-15 12:26:28] Department found: HR
+[2025-03-15 12:26:28] Department found: IT
+[2025-03-15 12:26:28] Department found: Marketing

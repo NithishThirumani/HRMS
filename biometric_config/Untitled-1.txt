@@ -1,0 +1,2 @@
+
+This documentation provides a comprehensive guide for integrating specific biometric devices with your system. It includes examples for common device types and troubleshooting tips to help with the integration process.

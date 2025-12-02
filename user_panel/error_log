@@ -1,0 +1,430 @@
+[16-Mar-2025 19:12:46 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'sansolutions_employees_management.EMPLOYEES' doesn't exist in /home/sansolutions/public_html/emps/user_panel/session.php:43
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/session.php(43): mysqli_query(Object(mysqli), 'SELECT role FRO...')
+#1 /home/sansolutions/public_html/emps/user_panel/index.php(1): include('/home/sansoluti...')
+#2 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/session.php on line 43
+[16-Mar-2025 19:16:09 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'sansolutions_employees_management.EMPLOYEES' doesn't exist in /home/sansolutions/public_html/emps/user_panel/session.php:43
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/session.php(43): mysqli_query(Object(mysqli), 'SELECT role FRO...')
+#1 /home/sansolutions/public_html/emps/user_panel/index.php(1): include('/home/sansoluti...')
+#2 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/session.php on line 43
+[16-Mar-2025 19:24:20 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'sansolutions_employees_management.EMPLOYEES' doesn't exist in /home/sansolutions/public_html/emps/user_panel/session.php:43
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/session.php(43): mysqli_query(Object(mysqli), 'SELECT role FRO...')
+#1 /home/sansolutions/public_html/emps/user_panel/index.php(1): include('/home/sansoluti...')
+#2 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/session.php on line 43
+[16-Mar-2025 19:26:47 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'sansolutions_employees_management.EMPLOYEES' doesn't exist in /home/sansolutions/public_html/emps/user_panel/session.php:43
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/session.php(43): mysqli_query(Object(mysqli), 'SELECT role FRO...')
+#1 /home/sansolutions/public_html/emps/user_panel/index.php(1): include('/home/sansoluti...')
+#2 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/session.php on line 43
+[16-Mar-2025 19:27:28 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'sansolutions_employees_management.EMPLOYEES' doesn't exist in /home/sansolutions/public_html/emps/user_panel/session.php:43
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/session.php(43): mysqli_query(Object(mysqli), 'SELECT role FRO...')
+#1 /home/sansolutions/public_html/emps/user_panel/index.php(1): include('/home/sansoluti...')
+#2 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/session.php on line 43
+[16-Mar-2025 19:28:51 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:29:08 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:29:10 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:29:12 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:29:24 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:29:27 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:29:29 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:29:37 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:29:37 UTC] PHP Deprecated:  str_pad(): Passing null to parameter #1 ($string) of type string is deprecated in /home/sansolutions/public_html/emps/user_panel/view_payslip.php on line 65
+[16-Mar-2025 19:34:14 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:34:50 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:34:54 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:35:38 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:35:39 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:35:50 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:37:11 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:39:05 UTC] PHP Warning:  Undefined array key "username" in /home/sansolutions/public_html/emps/user_panel/session.php on line 5
+[16-Mar-2025 19:43:00 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 19:43:00 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'sansolutions_employees_management.appraisal_assignments' doesn't exist in /home/sansolutions/public_html/emps/user_panel/topbar.php:82
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/topbar.php(82): mysqli->prepare('SELECT COUNT(*)...')
+#1 /home/sansolutions/public_html/emps/user_panel/index.php(90): include('/home/sansoluti...')
+#2 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/topbar.php on line 82
+[16-Mar-2025 20:10:15 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 20:10:24 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 20:13:11 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 20:15:22 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[16-Mar-2025 20:16:08 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 02:56:43 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 02:57:10 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 02:58:51 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:11:33 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:11:38 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:11:48 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:12:18 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Data too long for column 'status' at row 1 in /home/sansolutions/public_html/emps/user_panel/request_leave.php:93
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/request_leave.php(93): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/request_leave.php on line 93
+[17-Mar-2025 03:15:46 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:17:30 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:17:39 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:17:52 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:19:04 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:19:14 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:19:16 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:19:23 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:19:27 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:19:39 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 03:19:44 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 04:00:53 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 05:46:38 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 06:55:56 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 07:12:01 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 07:12:05 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[17-Mar-2025 13:22:35 UTC] PHP Warning:  Undefined array key "username" in /home/sansolutions/public_html/emps/user_panel/session.php on line 5
+[18-Mar-2025 18:51:03 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[18-Mar-2025 18:51:18 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[18-Mar-2025 18:51:49 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[18-Mar-2025 18:51:53 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[18-Mar-2025 18:52:56 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[18-Mar-2025 18:52:58 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[19-Mar-2025 20:03:15 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[20-Mar-2025 06:16:33 UTC] PHP Warning:  Undefined array key "username" in /home/sansolutions/public_html/emps/user_panel/session.php on line 5
+[20-Mar-2025 10:52:30 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[20-Mar-2025 10:52:54 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[20-Mar-2025 10:52:58 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 10:57:12 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 10:57:12 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/index.php:382
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/index.php(382): mysqli_query(Object(mysqli), 'SELECT departme...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/index.php on line 382
+[26-Mar-2025 10:57:22 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 10:57:22 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/index.php:382
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/index.php(382): mysqli_query(Object(mysqli), 'SELECT departme...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/index.php on line 382
+[26-Mar-2025 10:57:35 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 10:57:45 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 10:57:52 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 10:57:52 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/index.php:382
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/index.php(382): mysqli_query(Object(mysqli), 'SELECT departme...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/index.php on line 382
+[26-Mar-2025 14:27:33 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 14:27:33 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/index.php:382
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/index.php(382): mysqli_query(Object(mysqli), 'SELECT departme...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/index.php on line 382
+[26-Mar-2025 14:27:49 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 14:27:49 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'e.department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/attendance.php:83
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/attendance.php(83): mysqli_prepare(Object(mysqli), 'SELECT a.*, e.f...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/attendance.php on line 83
+[26-Mar-2025 14:28:08 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 14:28:13 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 14:36:30 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 14:36:30 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/index.php:382
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/index.php(382): mysqli_query(Object(mysqli), 'SELECT departme...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/index.php on line 382
+[26-Mar-2025 14:52:37 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 14:52:37 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/index.php:382
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/index.php(382): mysqli_query(Object(mysqli), 'SELECT departme...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/index.php on line 382
+[26-Mar-2025 14:52:39 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[26-Mar-2025 14:52:39 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/index.php:382
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/index.php(382): mysqli_query(Object(mysqli), 'SELECT departme...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/index.php on line 382
+[27-Mar-2025 05:19:54 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:19:54 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/index.php:382
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/index.php(382): mysqli_query(Object(mysqli), 'SELECT departme...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/index.php on line 382
+[27-Mar-2025 05:35:12 UTC] PHP Warning:  include(header.php): Failed to open stream: No such file or directory in /home/sansolutions/public_html/emps/user_panel/index.php on line 2
+[27-Mar-2025 05:35:12 UTC] PHP Warning:  include(): Failed opening 'header.php' for inclusion (include_path='.:/opt/cpanel/ea-php82/root/usr/share/pear') in /home/sansolutions/public_html/emps/user_panel/index.php on line 2
+[27-Mar-2025 05:35:12 UTC] PHP Warning:  include(call-to-action.php): Failed to open stream: No such file or directory in /home/sansolutions/public_html/emps/user_panel/index.php on line 174
+[27-Mar-2025 05:35:12 UTC] PHP Warning:  include(): Failed opening 'call-to-action.php' for inclusion (include_path='.:/opt/cpanel/ea-php82/root/usr/share/pear') in /home/sansolutions/public_html/emps/user_panel/index.php on line 174
+[27-Mar-2025 05:35:12 UTC] PHP Warning:  include(our_clients.php): Failed to open stream: No such file or directory in /home/sansolutions/public_html/emps/user_panel/index.php on line 320
+[27-Mar-2025 05:35:12 UTC] PHP Warning:  include(): Failed opening 'our_clients.php' for inclusion (include_path='.:/opt/cpanel/ea-php82/root/usr/share/pear') in /home/sansolutions/public_html/emps/user_panel/index.php on line 320
+[27-Mar-2025 05:35:12 UTC] PHP Warning:  include(testimonial.php): Failed to open stream: No such file or directory in /home/sansolutions/public_html/emps/user_panel/index.php on line 322
+[27-Mar-2025 05:35:12 UTC] PHP Warning:  include(): Failed opening 'testimonial.php' for inclusion (include_path='.:/opt/cpanel/ea-php82/root/usr/share/pear') in /home/sansolutions/public_html/emps/user_panel/index.php on line 322
+[27-Mar-2025 05:36:24 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:36:24 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/index.php:382
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/index.php(382): mysqli_query(Object(mysqli), 'SELECT departme...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/index.php on line 382
+[27-Mar-2025 05:39:07 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:42:42 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:43:03 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:45:30 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:46:55 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:47:22 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:48:00 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:48:20 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:48:49 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:49:29 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:49:54 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:50:01 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 05:56:27 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:05:33 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:05:39 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:05:51 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:05:52 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:06:08 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:07:23 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:08:15 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:09:24 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:10:47 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:12:07 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:12:43 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:12:57 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:13:23 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:14:17 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:14:56 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:15:09 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:16:33 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:16:38 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:17:28 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:18:26 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:18:55 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:18:55 UTC] PHP Warning:  Undefined array key "is_field_staff" in /home/sansolutions/public_html/emps/user_panel/attendance.php on line 31
+[27-Mar-2025 06:18:55 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'e.department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/attendance.php:83
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/attendance.php(83): mysqli_prepare(Object(mysqli), 'SELECT a.*, e.f...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/attendance.php on line 83
+[27-Mar-2025 06:18:58 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:19:00 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:19:00 UTC] PHP Warning:  Undefined array key "is_field_staff" in /home/sansolutions/public_html/emps/user_panel/attendance.php on line 31
+[27-Mar-2025 06:19:00 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'e.department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/attendance.php:83
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/attendance.php(83): mysqli_prepare(Object(mysqli), 'SELECT a.*, e.f...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/attendance.php on line 83
+[27-Mar-2025 06:19:07 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:19:10 UTC] PHP Warning:  Undefined variable $base_path in /home/sansolutions/public_html/emps/user_panel/sidebar.php on line 18
+[27-Mar-2025 06:19:10 UTC] PHP Warning:  Undefined array key "is_field_staff" in /home/sansolutions/public_html/emps/user_panel/attendance.php on line 31
+[27-Mar-2025 06:19:10 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'e.department' in 'field list' in /home/sansolutions/public_html/emps/user_panel/attendance.php:83
+Stack trace:
+#0 /home/sansolutions/public_html/emps/user_panel/attendance.php(83): mysqli_prepare(Object(mysqli), 'SELECT a.*, e.f...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/user_panel/attendance.php on line 83
+[23-Jul-2025 12:13:29 UTC] Session eid: CME0002
+[23-Jul-2025 12:13:30 UTC] Session eid: CME0002
+[23-Jul-2025 12:13:31 UTC] Session eid: CME0002
+[23-Jul-2025 12:13:31 UTC] Session eid: CME0002
+[23-Jul-2025 12:13:31 UTC] Session eid: CME0002
+[23-Jul-2025 12:13:31 UTC] Session eid: CME0002
+[23-Jul-2025 12:22:20 UTC] Session eid: CME0002
+[23-Jul-2025 12:25:23 UTC] Session eid: CME0002
+[25-Jul-2025 06:43:41 UTC] Session eid: CME0002
+[26-Jul-2025 14:06:54 UTC] Session eid: CME0003
+[26-Jul-2025 14:07:05 UTC] Session eid: CME0003
+[26-Jul-2025 14:09:13 UTC] Session eid: CME0004
+[26-Jul-2025 14:10:31 UTC] Session eid: CME0002
+[26-Jul-2025 14:11:09 UTC] Session eid: CME0006
+[26-Jul-2025 14:11:36 UTC] Session eid: CME0007
+[26-Jul-2025 14:12:52 UTC] Session eid: CME0006
+[26-Jul-2025 14:13:29 UTC] Session eid: CME0008
+[26-Jul-2025 14:14:25 UTC] Session eid: CME0012
+[26-Jul-2025 14:15:02 UTC] Session eid: CME0013
+[26-Jul-2025 14:15:32 UTC] Session eid: CME0014
+[26-Jul-2025 14:16:01 UTC] Session eid: CME0014
+[26-Jul-2025 14:16:21 UTC] Session eid: CME0015
+[26-Jul-2025 14:18:33 UTC] Session eid: CME0016
+[26-Jul-2025 14:19:50 UTC] Session eid: CME0017
+[26-Jul-2025 14:20:37 UTC] Session eid: CME0018
+[26-Jul-2025 14:22:00 UTC] Session eid: CME0018
+[26-Jul-2025 14:22:42 UTC] Session eid: CME0019
+[26-Jul-2025 14:24:07 UTC] Session eid: CME0020
+[26-Jul-2025 14:24:55 UTC] Session eid: CME0021
+[26-Jul-2025 14:25:28 UTC] Session eid: CME0022
+[26-Jul-2025 14:26:09 UTC] Session eid: CME0023
+[26-Jul-2025 14:26:35 UTC] Session eid: CME0022
+[26-Jul-2025 14:27:04 UTC] Session eid: CME0024
+[26-Jul-2025 14:27:35 UTC] Session eid: CME0025
+[26-Jul-2025 14:28:11 UTC] Session eid: CME0026
+[26-Jul-2025 14:28:39 UTC] Session eid: CME0026
+[26-Jul-2025 14:28:58 UTC] Session eid: CME0027
+[26-Jul-2025 14:29:17 UTC] Session eid: CME0028
+[26-Jul-2025 14:30:44 UTC] Session eid: CME0029
+[26-Jul-2025 14:32:30 UTC] Session eid: CME0030
+[26-Jul-2025 14:32:57 UTC] Session eid: CME0031
+[26-Jul-2025 14:38:46 UTC] Session eid: CME0034
+[26-Jul-2025 14:40:19 UTC] Session eid: CME0035
+[26-Jul-2025 14:41:29 UTC] Session eid: CME0038
+[26-Jul-2025 14:42:01 UTC] Session eid: CME0040
+[26-Jul-2025 14:42:22 UTC] Session eid: CME0041
+[26-Jul-2025 14:42:51 UTC] Session eid: CME0043
+[26-Jul-2025 14:43:25 UTC] Session eid: CME0044
+[26-Jul-2025 14:44:01 UTC] Session eid: CME0045
+[26-Jul-2025 14:44:23 UTC] Session eid: CME0046
+[26-Jul-2025 14:44:47 UTC] Session eid: CME0047
+[26-Jul-2025 14:45:12 UTC] Session eid: CME0048
+[26-Jul-2025 14:46:01 UTC] Session eid: CME0051
+[26-Jul-2025 14:46:32 UTC] Session eid: CME0055
+[26-Jul-2025 14:47:21 UTC] Session eid: CME0059
+[26-Jul-2025 14:48:07 UTC] Session eid: CME0078
+[26-Jul-2025 14:49:12 UTC] Session eid: CME0079
+[26-Jul-2025 14:49:37 UTC] Session eid: CME0079
+[26-Jul-2025 14:51:15 UTC] Session eid: CME0081
+[26-Jul-2025 15:33:01 UTC] Session eid: CME0033
+[26-Jul-2025 15:42:28 UTC] Session eid: CME0003
+[26-Jul-2025 16:23:32 UTC] Session eid: CME0003
+[26-Jul-2025 16:25:33 UTC] Session eid: CME0003
+[26-Jul-2025 16:27:35 UTC] Session eid: CME0003
+[26-Jul-2025 16:27:48 UTC] Session eid: CME0003
+[26-Jul-2025 16:28:08 UTC] Session eid: CME0003
+[26-Jul-2025 16:28:19 UTC] Session eid: CME0003
+[26-Jul-2025 16:29:52 UTC] Session eid: CME0004
+[26-Jul-2025 16:30:16 UTC] Session eid: CME0004
+[28-Jul-2025 05:56:42 UTC] Session eid: CME0002
+[28-Jul-2025 06:05:22 UTC] Session eid: CME0006
+[28-Jul-2025 06:24:42 UTC] Session eid: CME0001
+[28-Jul-2025 12:17:58 UTC] Session eid: CME0003
+[09-Aug-2025 07:21:27 UTC] Session eid: CME0006
+[09-Aug-2025 07:26:10 UTC] Session eid: CME0006
+[10-Aug-2025 15:37:08 UTC] Session eid: CME0006
+[10-Aug-2025 15:40:02 UTC] Session eid: CME0006
+[10-Aug-2025 15:40:16 UTC] Session eid: CME0006
+[12-Aug-2025 11:41:05 UTC] Session eid: CME0013
+[12-Aug-2025 11:54:52 UTC] Session eid: CME0043
+[12-Aug-2025 12:21:46 UTC] Session eid: CME0051
+[12-Aug-2025 12:23:00 UTC] Session eid: CME0017
+[12-Aug-2025 12:23:28 UTC] Session eid: CME0051
+[12-Aug-2025 12:24:00 UTC] Session eid: CME0051
+[12-Aug-2025 12:31:37 UTC] Session eid: CME0103
+[12-Aug-2025 13:01:19 UTC] Session eid: CME0013
+[12-Aug-2025 13:01:37 UTC] Session eid: CME0013
+[12-Aug-2025 13:02:27 UTC] Session eid: CME0002
+[12-Aug-2025 13:04:42 UTC] Session eid: CME0002
+[12-Aug-2025 13:22:24 UTC] Session eid: CME0006
+[12-Aug-2025 13:22:50 UTC] Session eid: CME0006
+[12-Aug-2025 13:37:54 UTC] Session eid: CME0103
+[12-Aug-2025 19:43:02 UTC] Session eid: CME0051
+[12-Aug-2025 19:44:56 UTC] Session eid: CME0051
+[12-Aug-2025 19:45:49 UTC] Session eid: CME0051
+[15-Aug-2025 08:51:06 UTC] Session eid: CME0051
+[15-Aug-2025 15:49:25 UTC] Session eid: CME0051
+[15-Aug-2025 18:47:30 UTC] Session eid: CME0051
+[16-Aug-2025 04:50:28 UTC] Session eid: CME0051
+[17-Aug-2025 14:53:12 UTC] Session eid: CME0051
+[18-Aug-2025 06:47:53 UTC] Session eid: CME0051
+[18-Aug-2025 06:48:44 UTC] Session eid: CME0051
+[18-Aug-2025 07:14:23 UTC] Session eid: CME0016
+[18-Aug-2025 07:18:31 UTC] Session eid: CME0016
+[18-Aug-2025 09:55:53 UTC] Session eid: CME0068
+[18-Aug-2025 10:33:18 UTC] Session eid: CME0103
+[18-Aug-2025 10:33:19 UTC] Session eid: CME0103
+[18-Aug-2025 10:33:23 UTC] Session eid: CME0103
+[18-Aug-2025 10:47:32 UTC] Session eid: CME0102
+[18-Aug-2025 10:49:35 UTC] Session eid: CME0103
+[18-Aug-2025 11:20:31 UTC] Session eid: CME0068
+[18-Aug-2025 11:21:56 UTC] Session eid: CME0068
+[18-Aug-2025 11:58:04 UTC] Session eid: CME0026
+[18-Aug-2025 11:58:42 UTC] Session eid: CME0026
+[18-Aug-2025 11:58:44 UTC] Session eid: CME0026
+[18-Aug-2025 11:59:09 UTC] Session eid: CME0043
+[18-Aug-2025 11:59:39 UTC] Session eid: CME0026
+[18-Aug-2025 11:59:45 UTC] Session eid: CME0026
+[18-Aug-2025 11:59:46 UTC] Session eid: CME0026
+[18-Aug-2025 11:59:47 UTC] Session eid: CME0026
+[18-Aug-2025 12:02:55 UTC] Session eid: CME0026
+[18-Aug-2025 12:02:58 UTC] Session eid: CME0026
+[18-Aug-2025 12:02:59 UTC] Session eid: CME0026
+[18-Aug-2025 12:03:00 UTC] Session eid: CME0026
+[18-Aug-2025 12:19:46 UTC] Session eid: CME0026
+[18-Aug-2025 12:19:51 UTC] Session eid: CME0026
+[18-Aug-2025 12:19:53 UTC] Session eid: CME0026
+[18-Aug-2025 12:19:56 UTC] Session eid: CME0026
+[18-Aug-2025 12:19:57 UTC] Session eid: CME0026
+[18-Aug-2025 13:17:43 UTC] Session eid: CME0017
+[18-Aug-2025 13:18:38 UTC] Session eid: CME0017
+[18-Aug-2025 13:19:26 UTC] Session eid: CME0017
+[18-Aug-2025 14:00:15 UTC] Session eid: CME0013
+[18-Aug-2025 14:21:58 UTC] Session eid: CME0018
+[18-Aug-2025 14:24:24 UTC] Session eid: CME0018
+[18-Aug-2025 14:52:17 UTC] Session eid: CME0018
+[19-Aug-2025 09:58:01 UTC] Session eid: CME0038
+[19-Aug-2025 10:01:48 UTC] Session eid: CME0038
+[20-Aug-2025 06:48:02 UTC] Session eid: CME0006
+[20-Aug-2025 07:56:35 UTC] Session eid: CME0038
+[22-Aug-2025 08:43:52 UTC] Session eid: CME0006
+[22-Aug-2025 08:44:03 UTC] Session eid: CME0006
+[22-Aug-2025 08:44:13 UTC] Session eid: CME0006
+[22-Aug-2025 08:44:16 UTC] Session eid: CME0006
+[22-Aug-2025 08:44:19 UTC] Session eid: CME0006
+[22-Aug-2025 08:44:54 UTC] Session eid: CME0006
+[22-Aug-2025 08:45:05 UTC] Session eid: CME0006
+[22-Aug-2025 08:45:09 UTC] Session eid: CME0006
+[22-Aug-2025 08:45:26 UTC] Session eid: CME0006
+[22-Aug-2025 08:46:12 UTC] Session eid: CME0006
+[22-Aug-2025 08:46:21 UTC] Session eid: CME0006
+[22-Aug-2025 08:47:39 UTC] Session eid: CME0006
+[22-Aug-2025 08:47:57 UTC] Session eid: CME0006
+[22-Aug-2025 08:54:56 UTC] Session eid: CME0098
+[22-Aug-2025 10:40:27 UTC] Session eid: CME0006
+[22-Aug-2025 10:40:57 UTC] Session eid: CME0006
+[22-Aug-2025 12:23:40 UTC] Session eid: CME0016
+[24-Aug-2025 12:29:35 UTC] Session eid: CME0006
+[25-Aug-2025 12:59:10 UTC] Session eid: CME0098
+[26-Aug-2025 05:41:49 UTC] Session eid: CME0006
+[26-Aug-2025 07:35:51 UTC] Session eid: CME0008
+[26-Aug-2025 07:43:38 UTC] Session eid: CME0024
+[26-Aug-2025 07:49:10 UTC] Session eid: CME0024
+[26-Aug-2025 14:05:32 UTC] Session eid: CME0098
+[27-Aug-2025 13:16:33 UTC] Session eid: CME0016
+[27-Aug-2025 13:26:17 UTC] Session eid: CME0016
+[28-Aug-2025 13:52:35 UTC] Session eid: CME0099
+[29-Aug-2025 05:48:12 UTC] Session eid: CME0006
+[29-Aug-2025 12:54:15 UTC] Session eid: CME0047
+[30-Aug-2025 05:28:56 UTC] Session eid: CME0016
+[01-Sep-2025 13:16:49 UTC] Session eid: CME0006
+[02-Sep-2025 18:58:47 UTC] Session eid: CME0027
+[09-Sep-2025 18:27:39 UTC] Session eid: CME0021
+[09-Sep-2025 19:50:57 UTC] Session eid: CME0021
+[11-Sep-2025 13:57:08 UTC] Session eid: CME0019
+[16-Sep-2025 13:01:57 UTC] Session eid: CME0018
+[16-Sep-2025 13:19:32 UTC] Session eid: CME0018
+[16-Sep-2025 14:18:37 UTC] Session eid: CME0038
+[16-Sep-2025 14:33:58 UTC] Session eid: CME0102
+[17-Sep-2025 06:36:04 UTC] Session eid: CME0018
+[17-Sep-2025 08:14:52 UTC] Session eid: CME0099
+[17-Sep-2025 11:38:13 UTC] Session eid: CME0018
+[17-Sep-2025 13:15:26 UTC] Session eid: CME0099
+[18-Sep-2025 04:44:14 UTC] Session eid: CME0018
+[18-Sep-2025 06:25:42 UTC] Session eid: CME0019
+[18-Sep-2025 06:30:01 UTC] Session eid: CME0099
+[18-Sep-2025 06:52:41 UTC] Session eid: CME0018
+[18-Sep-2025 13:54:43 UTC] Session eid: CME0099
+[19-Sep-2025 09:35:21 UTC] Session eid: CME0099
+[19-Sep-2025 09:35:31 UTC] Session eid: CME0099
+[20-Sep-2025 16:58:45 UTC] Session eid: CME0021
+[20-Sep-2025 16:59:05 UTC] Session eid: CME0021
+[22-Sep-2025 06:03:11 UTC] Session eid: CME0099
+[22-Sep-2025 10:04:25 UTC] Session eid: CME0099
+[22-Sep-2025 13:42:20 UTC] Session eid: CME0099
+[22-Sep-2025 13:52:25 UTC] Session eid: CME0099
+[22-Sep-2025 13:59:40 UTC] Session eid: CME0021
+[25-Sep-2025 09:02:41 UTC] Session eid: CME0026
+[25-Sep-2025 09:04:05 UTC] Session eid: CME0026
+[29-Sep-2025 19:40:48 UTC] Session eid: CME0006
+[02-Oct-2025 14:43:26 UTC] Session eid: CME0043
+[02-Oct-2025 14:52:42 UTC] Session eid: CME0047
+[02-Oct-2025 14:53:02 UTC] Session eid: CME0043
+[02-Oct-2025 14:53:31 UTC] Session eid: CME0047

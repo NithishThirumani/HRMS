@@ -1,0 +1,9 @@
+{
+    "require": {
+        "phpoffice/phpspreadsheet": "^4.2",
+        "mpdf/mpdf": "^8.2",
+        "endroid/qr-code": "^6.0",
+        "setasign/fpdi": "^2.6",
+        "setasign/fpdf": "^1.8"
+    }
+}

@@ -1,0 +1,7 @@
+[17-Mar-2025 06:50:09 UTC] Assignment attempt - EmpID: 7, TemplateID: 1, AdminID: 1
+[17-Mar-2025 06:50:09 UTC] Exception in assignDocumentToEmployee: Field 'assignment_id' doesn't have a default value
+[20-Mar-2025 10:52:00 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'da.document_number' in 'field list' in /home/sansolutions/public_html/emps/admin_panel/documents/admin_signed_documents.php:18
+Stack trace:
+#0 /home/sansolutions/public_html/emps/admin_panel/documents/admin_signed_documents.php(18): mysqli->prepare('SELECT \r\n    da...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/admin_panel/documents/admin_signed_documents.php on line 18

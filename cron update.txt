@@ -1,0 +1,30 @@
+The update_leave_balance.php is designed to automatically update employees' leave balances based on their monthly accrual rates. Here's how it works:
+
+1. Purpose:
+   
+   - Automatically credits leave balances to employees monthly
+   - Ensures employees receive their entitled leave days gradually throughout the year
+   - Maintains leave balances within maximum allowed limits
+2. Process:
+   
+   - Checks all employees against leave policies
+   - Calculates service duration for each employee
+   - Updates or creates leave balance records if minimum service period is met
+   - Prevents exceeding maximum allowed days per leave type
+3. To make it work: Set up a Windows Task Scheduler to run this script monthly:
+```bash
+php c:\xampp\htdocs\emps\cron\update_leave_balance.php
+ ```
+
+4. Recommended Schedule:
+   
+   - Run on the 1st day of each month
+   - Set time: Early morning (e.g., 1:00 AM)
+   - Frequency: Monthly
+5. Example Task Scheduler setup:
+   
+   - Program/script: C:\xampp\php\php.exe
+   - Arguments: c:\xampp\htdocs\emps\cron\update_leave_balance.php
+   - Start in: c:\xampp\htdocs\emps\cron
+   - Run monthly on day 1
+This automation ensures that leave balances are updated consistently without manual intervention, following your organization's leave policies.

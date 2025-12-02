@@ -1,0 +1,18 @@
+passport_number passport_type pissue_date pvalidity country pissue_place pissue_city passport_add1 	passport_add2 	passport_held 	Remarks 
+
+
+
+imap.gmail.com  993
+SMTP.GMAIL.COM   587
+
+
+Employee Number	
+Employee Name	
+Family Member Name	
+DOB	
+Nationality	
+Blood Group	
+Gender	
+Profession	
+Relation	
+Remarks

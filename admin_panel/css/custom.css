@@ -1,0 +1,106 @@
+/* Enhanced Sidebar Animations */
+.sidebar {
+    transition: all 0.3s ease-in-out !important;
+}
+
+.sidebar .nav-item {
+    transition: background 0.2s ease-in-out;
+}
+
+.sidebar .nav-item .nav-link {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar .nav-item .nav-link:hover {
+    transform: translateX(4px);
+}
+
+.sidebar-dark .nav-item .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.collapse-inner {
+    transition: all 0.25s ease-in-out;
+}
+
+.collapse-item {
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.collapse-item:hover {
+    transform: translateX(4px);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.collapse-item.active {
+    animation: activeItem 0.3s ease-in-out;
+}
+
+.sidebar .nav-item .collapse {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-brand {
+    transition: all 0.3s ease;
+}
+
+.sidebar-brand:hover {
+    transform: scale(1.02);
+}
+
+@keyframes activeItem {
+    0% {
+        background-position: 100%;
+    }
+    100% {
+        background-position: 0%;
+    }
+}
+
+/* Smooth collapse animation */
+.collapse {
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Icon animations */
+.nav-item i {
+    transition: transform 0.2s ease;
+}
+
+.nav-item:hover i {
+    transform: scale(1.1);
+}
+
+/* Active state enhancement */
+.nav-item.active .nav-link {
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.datetime-container {
+    padding: 8px 15px;
+    border-radius: 5px;
+    background: linear-gradient(145deg, #f8f9fc, #e2e6f0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.datetime-text {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.gregorian {
+    color: #4e73df;
+    transition: color 0.3s ease;
+}
+
+.hijri {
+    color: #1cc88a;
+    transition: color 0.3s ease;
+}
+
+.gregorian:hover, .hijri:hover {
+    color: #224abe;
+}

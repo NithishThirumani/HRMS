@@ -1,0 +1,42 @@
+[23-May-2025 06:06:53 UTC] User found - Role in DB: active
+[23-May-2025 06:06:53 UTC] Role mismatch - Selected: USER, Actual: ACTIVE
+[23-May-2025 06:07:01 UTC] User found - Role in DB: active
+[23-May-2025 06:07:01 UTC] Role mismatch - Selected: USER, Actual: ACTIVE
+[23-May-2025 06:08:54 UTC] User found - Role in DB: 
+[23-May-2025 06:08:54 UTC] Password verification failed for user: usman.t
+[23-May-2025 06:10:14 UTC] User found - Role in DB: user
+[23-May-2025 06:25:07 UTC] User found - Role in DB: user
+[23-May-2025 06:28:47 UTC] User found - Role in DB: user
+[23-May-2025 06:51:53 UTC] User found - Role in DB: user
+[23-May-2025 07:33:18 UTC] User found - Role in DB: user
+[23-May-2025 07:33:18 UTC] Password verification failed for user: hr
+[23-May-2025 07:33:29 UTC] User found - Role in DB: user
+[23-May-2025 07:33:29 UTC] Password verification failed for user: hr
+[23-May-2025 07:34:37 UTC] User found - Role in DB: user
+[23-May-2025 07:35:58 UTC] User found - Role in DB: user
+[23-May-2025 07:35:58 UTC] Password verification failed for user: hr
+[23-May-2025 07:36:14 UTC] User found - Role in DB: user
+[23-May-2025 07:36:14 UTC] Password verification failed for user: hr
+[23-May-2025 07:36:57 UTC] User found - Role in DB: user
+[23-May-2025 07:36:57 UTC] Password verification failed for user: hr
+[23-May-2025 07:39:05 UTC] User found - Role in DB: user
+[23-May-2025 07:39:05 UTC] Role mismatch - Selected: HR, Actual: USER
+[23-May-2025 07:39:28 UTC] User found - Role in DB: user
+[23-May-2025 07:39:28 UTC] Role mismatch - Selected: HOD, Actual: USER
+[23-May-2025 07:39:45 UTC] User found - Role in DB: user
+[23-May-2025 07:41:25 UTC] User found - Role in DB: user
+[23-May-2025 07:41:25 UTC] Password verification failed for user: rehmat
+[23-May-2025 07:42:00 UTC] User found - Role in DB: user
+[23-May-2025 12:37:33 UTC] User found - Role in DB: user
+[03-Jun-2025 08:30:19 UTC] User found - Role in DB: user
+[04-Jun-2025 06:07:26 UTC] No active user found with username: bashid
+[04-Jun-2025 06:07:50 UTC] No active user found with username: hod
+[04-Jun-2025 06:10:17 UTC] User found - Role in DB: user
+[04-Jun-2025 06:10:17 UTC] Password verification failed for user: hr
+[04-Jun-2025 06:10:34 UTC] User found - Role in DB: user
+[04-Jun-2025 06:10:34 UTC] Password verification failed for user: hr
+[04-Jun-2025 06:10:45 UTC] User found - Role in DB: user
+[04-Jun-2025 06:10:45 UTC] Password verification failed for user: hr
+[04-Jun-2025 06:11:19 UTC] User found - Role in DB: user
+[04-Jun-2025 06:11:19 UTC] Password verification failed for user: hr
+[04-Jun-2025 06:30:42 UTC] User found - Role in DB: user

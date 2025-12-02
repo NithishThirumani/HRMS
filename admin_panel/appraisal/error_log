@@ -1,0 +1,10 @@
+[30-Apr-2025 07:53:46 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'department' in 'field list' in /home/sansolutions/public_html/emps/admin_panel/appraisal/view_appraisals.php:136
+Stack trace:
+#0 /home/sansolutions/public_html/emps/admin_panel/appraisal/view_appraisals.php(136): mysqli->query('SELECT DISTINCT...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/admin_panel/appraisal/view_appraisals.php on line 136
+[30-Apr-2025 07:53:51 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'department' in 'field list' in /home/sansolutions/public_html/emps/admin_panel/appraisal/initiate_appraisal.php:131
+Stack trace:
+#0 /home/sansolutions/public_html/emps/admin_panel/appraisal/initiate_appraisal.php(131): mysqli->query('SELECT DISTINCT...')
+#1 {main}
+  thrown in /home/sansolutions/public_html/emps/admin_panel/appraisal/initiate_appraisal.php on line 131
