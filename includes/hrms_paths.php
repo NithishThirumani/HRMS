@@ -17,8 +17,13 @@ if (!function_exists('hrms_base_path')) {
             return '/' . trim($env, '/');
         }
 
-        // Render sets RENDER=true; app is deployed at domain root, not /emps/
+        // Render / cloud hosts serve from domain root, not /emps/
         if (getenv('RENDER') || getenv('RENDER_EXTERNAL_URL')) {
+            return '';
+        }
+
+        $host = strtolower((string) ($_SERVER['HTTP_HOST'] ?? ''));
+        if ($host !== '' && (str_contains($host, 'onrender.com') || str_contains($host, 'render.com'))) {
             return '';
         }
 

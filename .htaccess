@@ -1,0 +1,5 @@
+RewriteEngine On
+
+# Local dev used /emps/ subfolder; production (Render) serves from site root.
+# Internally map /emps/... -> /... so old links and bookmarks still work.
+RewriteRule ^emps/(.*)$ $1 [L]
