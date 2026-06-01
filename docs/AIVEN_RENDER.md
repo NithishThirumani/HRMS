@@ -15,6 +15,8 @@ Parse your service URI:
 | `DB_NAME` | e.g. `defaultdb` |
 | `DB_SSL` | `1` or `true` (required for Aiven) |
 
+**Paths on Render:** The app auto-detects Render (`RENDER` env) and uses site root instead of `/emps/`. Optional override: `APP_BASE_PATH=` (empty) or `APP_BASE_PATH=/emps` for subfolder deploys.
+
 ## Migrate database (Windows + Docker)
 
 ```powershell

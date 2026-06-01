@@ -3,6 +3,7 @@
  * Scoped PHP sessions so admin and employee can stay logged in
  * in different browser tabs without overwriting each other.
  */
+require_once __DIR__ . '/hrms_paths.php';
 
 function hrms_session_name(string $scope): string
 {
@@ -23,7 +24,7 @@ function hrms_start_session(string $scope): void
 
     session_set_cookie_params([
         'lifetime' => 0,
-        'path' => '/emps/',
+        'path' => hrms_cookie_path(),
         'httponly' => true,
         'samesite' => 'Lax',
     ]);

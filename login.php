@@ -5,6 +5,7 @@ error_reporting(E_ALL);
 
 ob_start(); // Add output buffering
 require_once __DIR__ . '/includes/hrms_session.php';
+require_once __DIR__ . '/includes/hrms_paths.php';
 hrms_start_session('login');
 include('connection.php');
 
@@ -151,11 +152,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 // Handle redirect after all processing
 if ($redirect) {
-    // Ensure proper redirect URL
     $redirect = trim($redirect, '/');
-    if (!empty($redirect)) {
-       header("Location: /emps/" . $redirect);
-        exit();
+    if ($redirect !== '') {
+        hrms_redirect($redirect);
     }
 }
 

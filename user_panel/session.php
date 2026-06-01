@@ -1,11 +1,12 @@
 <?php
 require_once dirname(__DIR__) . '/includes/hrms_session.php';
+require_once dirname(__DIR__) . '/includes/hrms_paths.php';
 hrms_start_session('employee');
 include('connection.php');
 
 // Check if user is logged in with all required session variables
 if (!isset($_SESSION['eid']) || empty($_SESSION['eid'])) {
-    header("Location: /emps/login.php");
+    hrms_redirect('login.php');
     exit();
 }
 
@@ -22,7 +23,7 @@ if (isset($_SESSION['last_activity'])) {
         // Destroy session and redirect to login
         session_unset();
         session_destroy();
-        header("Location: /emps/login.php?timeout=1");
+        header('Location: ' . hrms_url('login.php?timeout=1'));
         exit();
     }
 }
@@ -51,7 +52,7 @@ if ($result->num_rows === 0) {
     // If employee not found or inactive, destroy session and redirect
     session_unset();
     session_destroy();
-    header("Location: /emps/login.php?error=invalid_user");
+    header('Location: ' . hrms_url('login.php?error=invalid_user'));
     exit();
 }
 

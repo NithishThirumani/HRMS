@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/hrms_session.php';
+require_once __DIR__ . '/../includes/hrms_paths.php';
 hrms_start_session('employee');
 include('connection.php');
 
@@ -12,7 +13,7 @@ error_log("HOD Session Debug - Username: " . ($_SESSION['username'] ?? 'NOT SET'
 // Simple security check - check if user is logged in
 if (!isset($_SESSION['email']) && !isset($_SESSION['eid']) && !isset($_SESSION['admin_id'])) {
     error_log("HOD Session Debug - No session variables found, redirecting to login");
-    header("Location: /emps/login.php");
+    hrms_redirect('login.php');
     exit();
 }
 
@@ -20,7 +21,7 @@ if (!isset($_SESSION['email']) && !isset($_SESSION['eid']) && !isset($_SESSION['
 if (isset($_SESSION['is_trainee']) && $_SESSION['is_trainee'] == 1) {
     session_unset();
     session_destroy();
-    header("Location: /emps/login.php");
+    hrms_redirect('login.php');
     exit();
 }
 
@@ -78,7 +79,7 @@ if (!$is_hod && isset($_SESSION['eid'])) {
 
     if (!$is_hod) {
     error_log("HOD Session Debug - User is not HOD, redirecting to login");
-    header("Location: /emps/login.php");
+    hrms_redirect('login.php');
     exit();
 }
 
@@ -87,7 +88,7 @@ $timeout = 1800; // 30 minutes in seconds
     if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
     session_unset();
     session_destroy();
-    header("Location: /emps/login.php");
+    hrms_redirect('login.php');
     exit();
 }
 $_SESSION['last_activity'] = time();
@@ -117,7 +118,7 @@ if (isset($_SESSION['eid'])) {
         error_log("HOD Session Debug - Employee verified: " . $hod_data['full_name'] . ", Role: " . $hod_data['role'] . ", Department: " . $hod_data['department_name']);
         } else {
         error_log("HOD Session Debug - Employee not found for EID: " . $_SESSION['eid']);
-        header("Location: /emps/login.php");
+        hrms_redirect('login.php');
         exit();
     }
 }
