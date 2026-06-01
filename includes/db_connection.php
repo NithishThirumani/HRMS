@@ -19,9 +19,20 @@ if (!function_exists('hrms_get_db_connection')) {
             $pass = 'Nizam123$';
         }
         $name = getenv('DB_NAME') ?: 'EMPS';
+        $port = (int) (getenv('DB_PORT') ?: 3306);
+        $useSsl = filter_var(getenv('DB_SSL') ?: '0', FILTER_VALIDATE_BOOLEAN);
 
-        $connection = mysqli_connect($host, $user, $pass, $name);
+        $connection = mysqli_init();
         if (!$connection) {
+            throw new Exception('mysqli_init failed');
+        }
+
+        if ($useSsl) {
+            mysqli_ssl_set($connection, null, null, null, null, null);
+        }
+
+        $flags = $useSsl ? MYSQLI_CLIENT_SSL : 0;
+        if (!mysqli_real_connect($connection, $host, $user, $pass, $name, $port, null, $flags)) {
             throw new Exception('Connection failed: ' . mysqli_connect_error());
         }
 

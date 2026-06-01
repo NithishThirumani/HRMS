@@ -27,3 +27,6 @@ Thumbs.db
 # Environment (if added later)
 .env
 .env.local
+
+# Generated Aiven import (may contain data)
+database/emps_aiven.sql
