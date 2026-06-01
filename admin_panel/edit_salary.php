@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Calculate leaves and LTO amounts separately
     $leaves_amt = $leaves * $one_day_salary;
-    $lto_amt = $lto;
+    $lto_amt = $lto * $one_day_salary;
 
     // Calculate deductions components
     $unpaid_leave_deduction = $leaves_amt + $lto_amt;

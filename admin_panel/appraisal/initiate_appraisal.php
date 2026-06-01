@@ -1,16 +1,10 @@
 <?php
-session_start();
-require_once '../../connection.php';
-require_once '../../classes/AppraisalPeriod.php';
-require_once '../../classes/Employee.php';
+require_once __DIR__ . '/bootstrap_session.php';
+require_once __DIR__ . '/../../connection.php';
+require_once __DIR__ . '/../../classes/AppraisalPeriod.php';
+require_once dirname(__DIR__, 2) . '/includes/appraisal_helpers.php';
 
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'hr'])) {
-    header('Location: ../../login.php');
-    exit();
-}
-
-$appraisalPeriod = new AppraisalPeriod();
-$activePeriods = $appraisalPeriod->getCurrentPeriod();
+$departments = hrms_get_departments_list($con);
 ?>
 
 <!DOCTYPE html>
@@ -126,15 +120,11 @@ $activePeriods = $appraisalPeriod->getCurrentPeriod();
                             <div class="form-group">
                                 <label>Departments</label>
                                 <select class="form-control select2" name="departments[]" multiple required>
-                                    <?php
-                                    $query = "SELECT DISTINCT department FROM employees WHERE department IS NOT NULL ORDER BY department";
-                                    $result = $con->query($query);
-                                    while ($row = $result->fetch_assoc()):
-                                        ?>
-                                        <option value="<?php echo $row['department']; ?>">
-                                            <?php echo $row['department']; ?>
+                                    <?php foreach ($departments as $dept): ?>
+                                        <option value="<?php echo (int) $dept['id']; ?>">
+                                            <?php echo htmlspecialchars($dept['name']); ?>
                                         </option>
-                                    <?php endwhile; ?>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary">Initiate Appraisal</button>
@@ -165,7 +155,7 @@ $activePeriods = $appraisalPeriod->getCurrentPeriod();
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                    <a class="btn btn-success" href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>
@@ -184,7 +174,6 @@ $activePeriods = $appraisalPeriod->getCurrentPeriod();
     <script src="../js/demo/datatables-demo.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/datetime.js"></script>
-    <script src="../js/criteria.js"></script>
     <script src="../js/appraisal-initiation.js"></script>
 </body>
 

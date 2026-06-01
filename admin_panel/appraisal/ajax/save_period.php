@@ -1,7 +1,9 @@
 <?php
-session_start();
-require_once(__DIR__ . '/../../../connection.php');
-require_once(__DIR__ . '/../../../classes/AppraisalPeriod.php');
+require_once __DIR__ . '/../bootstrap_session.php';
+require_once dirname(__DIR__, 3) . '/connection.php';
+require_once dirname(__DIR__, 3) . '/classes/AppraisalPeriod.php';
+
+header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);

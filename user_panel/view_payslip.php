@@ -1,5 +1,32 @@
-<?php include('session.php'); ?>
+<?php
+include('session.php');
+require_once dirname(__DIR__) . '/includes/salary_helpers.php';
 
+$eid = $_SESSION['eid'] ?? '';
+if ($eid === '') {
+    header('Location: /emps/login.php');
+    exit();
+}
+
+$stmt = $con->prepare(
+    'SELECT s.*, ss.slip_no
+     FROM sal s
+     LEFT JOIN salary_slips ss ON ss.salary_id = s.id
+     WHERE s.emp_id = ?
+     ORDER BY s.salary_date DESC'
+);
+$stmt->bind_param('s', $eid);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$rows = [];
+while ($row = $result->fetch_assoc()) {
+    if (empty($row['slip_no'])) {
+        $row['slip_no'] = hrms_ensure_salary_slip($con, (int) $row['id']);
+    }
+    $rows[] = $row;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,52 +66,28 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            $emp_id = $_SESSION['eid']; // Employee ID from session
-                            error_log('Session eid: ' . $_SESSION['eid']);
-                            // Query salary records for this employee
-                             $emp_id1 = $emp_id;
-                            $emp_id2 = $emp_id;
-                            $query = "SELECT sal.*, salary_slips.slip_no
-                                      FROM sal
-                                      INNER JOIN salary_slips ON salary_slips.salary_id = sal.id
-                                      INNER JOIN (
-                                          SELECT MAX(salary_slips.slip_no) as max_slip_no, YEAR(sal.salary_date) as y, MONTH(sal.salary_date) as m
-                                          FROM sal
-                                          INNER JOIN salary_slips ON salary_slips.salary_id = sal.id
-                                          WHERE sal.emp_id = ?
-                                          GROUP BY y, m
-                                      ) latest ON salary_slips.slip_no = latest.max_slip_no
-                                              AND YEAR(sal.salary_date) = latest.y
-                                              AND MONTH(sal.salary_date) = latest.m
-                                      WHERE sal.emp_id = ?
-                                      ORDER BY sal.salary_date DESC";
-                            $stmt = $con->prepare($query);
-                            $stmt->bind_param("ss", $emp_id1, $emp_id2);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-
-                            if (mysqli_num_rows($result) > 0) {
-                                while ($row = mysqli_fetch_assoc($result)) {
-                                    echo "<tr>";
-                                    echo "<td>HRMS-" . str_pad($row['slip_no'] ?? '', 6, "0", STR_PAD_LEFT) . "</td>";
-                                    echo "<td>" . date('F', strtotime($row['salary_date'])) . "</td>";
-                                    echo "<td>AED " . number_format($row['base_salary'], 2) . "</td>";
-                                    echo "<td>AED " . number_format($row['total_salary'], 2) . "</td>";
-                                    echo "<td>" . $row['present_days'] . "</td>";
-                                    echo "<td>" . $row['leaves'] . "</td>";
-                                    echo "<td>
-                                            <a href='../admin_panel/generate_payslip.php?id=" . $row['id'] . "' 
-                                               class='btn btn-primary btn-sm' target='_blank'>
-                                                <i class='fas fa-download'></i> Download
+                            <?php if (count($rows) > 0): ?>
+                                <?php foreach ($rows as $row): ?>
+                                    <tr>
+                                        <td>HRMS-<?php echo str_pad((string) $row['slip_no'], 6, '0', STR_PAD_LEFT); ?></td>
+                                        <td><?php echo date('F Y', strtotime($row['salary_date'])); ?></td>
+                                        <td>AED <?php echo number_format((float) $row['base_salary'], 2); ?></td>
+                                        <td>AED <?php echo number_format((float) $row['total_salary'], 2); ?></td>
+                                        <td><?php echo htmlspecialchars($row['present_days']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['leaves']); ?></td>
+                                        <td>
+                                            <a href="generate_payslip.php?id=<?php echo (int) $row['id']; ?>"
+                                               class="btn btn-primary btn-sm" target="_blank">
+                                                <i class="fas fa-download"></i> Download
                                             </a>
-                                          </td>";
-                                    echo "</tr>";
-                                }
-                            } else {
-                                echo "<tr><td colspan='7'>No payslip records found.</td></tr>";
-                            }
-                            ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">No payslip records found.</td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -94,34 +97,10 @@
 
     <?php include_once('footer.php'); ?>
 
-
-    <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
 
-
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="/emps/user_panel/logout.php">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>

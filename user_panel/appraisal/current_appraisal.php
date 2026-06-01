@@ -1,32 +1,11 @@
 <?php
-include('../connection.php');
 include('../session.php');
 
-// Check if user is logged in and verify against emp_login and employees tables
-if (!isset($_SESSION['user_name'])) {
-    header("Location: /emps/login.php");
+$emp_id = (int) ($_SESSION['user_id'] ?? 0);
+if ($emp_id <= 0) {
+    header('Location: /emps/login.php');
     exit();
 }
-
-$username = $_SESSION['user_name'];
-
-// Get employee details
-$query = "SELECT e.id as emp_id, e.eid, e.full_name 
-          FROM employees e 
-          INNER JOIN emp_login el ON e.user_name = el.user_name 
-          WHERE e.user_name = ?";
-$stmt = $con->prepare($query);
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows === 0) {
-    header("Location: /emps/login.php");
-    exit();
-}
-
-$employee = $result->fetch_assoc();
-$emp_id = $employee['emp_id'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,30 +54,27 @@ $emp_id = $employee['emp_id'];
                 $period_result = $con->query($period_query);
                 if ($period_result->num_rows > 0) {
                     $period = $period_result->fetch_assoc();
-                    // 2. Get the employee's appraisal form for this period
-                    $form_query = "SELECT * FROM appraisal_forms WHERE period_id = ? AND employee_id = ?";
-                    $stmt = $con->prepare($form_query);
-                    $stmt->bind_param("ii", $period['period_id'], $emp_id);
+                    $ea_query = "SELECT * FROM employee_appraisals WHERE period_id = ? AND employee_id = ? LIMIT 1";
+                    $stmt = $con->prepare($ea_query);
+                    $stmt->bind_param('ii', $period['period_id'], $emp_id);
                     $stmt->execute();
-                    $form_result = $stmt->get_result();
-                    $form = $form_result->fetch_assoc();
-                    if (!$form) {
-                        // Create a new form if not exists
-                        $create_form = "INSERT INTO appraisal_forms (period_id, employee_id, status) VALUES (?, ?, 'Pending')";
-                        $stmt = $con->prepare($create_form);
-                        $stmt->bind_param("ii", $period['period_id'], $emp_id);
-                        $stmt->execute();
-                        $form_id = $con->insert_id;
+                    $appraisal = $stmt->get_result()->fetch_assoc();
+                    if (!$appraisal) {
+                        $create = $con->prepare(
+                            "INSERT INTO employee_appraisals (employee_id, period_id, status) VALUES (?, ?, 'Pending')"
+                        );
+                        $create->bind_param('ii', $emp_id, $period['period_id']);
+                        $create->execute();
+                        $appraisal_id = (int) $con->insert_id;
                     } else {
-                        $form_id = $form['form_id'];
+                        $appraisal_id = (int) $appraisal['appraisal_id'];
                     }
-                    // 3. Get criteria and self-ratings
                     $criteria_query = "SELECT c.*, r.self_rating, r.comments as self_comments
                                        FROM appraisal_criteria c
                                        LEFT JOIN appraisal_ratings r ON c.criteria_id = r.criteria_id AND r.appraisal_id = ?
                                        WHERE c.is_active = 1";
                     $stmt = $con->prepare($criteria_query);
-                    $stmt->bind_param("i", $form_id);
+                    $stmt->bind_param('i', $appraisal_id);
                     $stmt->execute();
                     $criteria_result = $stmt->get_result();
                     if ($criteria_result->num_rows > 0) {
@@ -109,7 +85,7 @@ $emp_id = $employee['emp_id'];
                             </p>
                         </div>
                         <form action="save_self_appraisal.php" method="POST">
-                            <input type="hidden" name="form_id" value="<?php echo $form_id; ?>">
+                            <input type="hidden" name="appraisal_id" value="<?php echo $appraisal_id; ?>">
                             <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <thead>

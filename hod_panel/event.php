@@ -6,13 +6,13 @@
     if(mysqli_query($con, $delete_query)) {
         echo "<script>alert('Event deleted successfully!');</script>";
         // Redirect to the same page or any other desired page after deletion
-        echo "<script>window.location.href='http://localhost/emps/admin_panel/event.php';</script>";
+        echo "<script>window.location.href='/emps/admin_panel/event.php';</script>";
         exit();
     } else {
         // Handle deletion error
         echo "<script>alert('Error: " . mysqli_error($con) . "');</script>";
         // Redirect to the same page or any other desired page after deletion
-        echo "<script>window.location.href='http://localhost/emps/admin_panel/event.php';</script>";
+        echo "<script>window.location.href='/emps/admin_panel/event.php';</script>";
         exit();
     }
 }
@@ -149,7 +149,7 @@
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                        href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

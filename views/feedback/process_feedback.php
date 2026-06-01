@@ -32,11 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     $stmt->close();
-    header("Location: submit_feedback.php");
+    header("Location: /emps/views/feedback/submit_feedback.php");
     exit();
 } else {
     // If someone tries to access this file directly without POST
-    header("Location: submit_feedback.php");
+    header("Location: /emps/views/feedback/submit_feedback.php");
     exit();
 }
-?> 

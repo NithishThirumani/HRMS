@@ -9,30 +9,32 @@ if(isset($_GET['op']) && isset($_GET['np']) && isset($_GET['cp'])) {
     $new_password = $_GET['np'];
     $confirm_password = $_GET['cp'];
 
-    $query = "SELECT * FROM admin WHERE user_name = '$un' AND password = '$old_password'";
-    $result = mysqli_query($con, $query);
+    $query = "SELECT * FROM admin WHERE user_name = ? AND password = ?";
+    $stmt = mysqli_prepare($con, $query);
+    mysqli_stmt_bind_param($stmt, "ss", $un, $old_password);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     $count = mysqli_num_rows($result);
-    //echo $count;
 
     if ($count == 0) {
         echo "<script>alert('Old password is incorrect');</script>";
-        echo "<script>window.location.href='http://localhost/emps/admin_panel/change_password.php';</script>";
+        echo "<script>window.location.href='/emps/admin_panel/change_password.php';</script>";
     } else {
         if ($new_password == $confirm_password) {
-            $update_query = "UPDATE admin SET password = '$new_password' WHERE user_name = '$un'";
-            if (mysqli_query($con, $update_query)) {
+            $update_query = "UPDATE admin SET password = ? WHERE user_name = ?";
+            $up_stmt = mysqli_prepare($con, $update_query);
+            mysqli_stmt_bind_param($up_stmt, "ss", $new_password, $un);
+            
+            if (mysqli_stmt_execute($up_stmt)) {
                 echo "<script>alert('Password updated successfully');</script>";
-                echo "<script>window.location.href='http://localhost/emps/admin_panel/change_password.php';</script>";
-
+                echo "<script>window.location.href='/emps/admin_panel/change_password.php';</script>";
             } else {
                 echo "<script>alert('Error in updating Password');</script>";
-                echo "<script>window.location.href='http://localhost/emps/admin_panel/change_password.php';</script>";
-
+                echo "<script>window.location.href='/emps/admin_panel/change_password.php';</script>";
             }
         } else {
             echo "<script>alert('New password and confirm password do not match');</script>";
-            echo "<script>window.location.href='http://localhost/emps/admin_panel/change_password.php';</script>";
-
+            echo "<script>window.location.href='/emps/admin_panel/change_password.php';</script>";
         }
     }
 } 
@@ -160,7 +162,7 @@ if(isset($_GET['op']) && isset($_GET['np']) && isset($_GET['cp'])) {
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                        href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

@@ -47,11 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Calculate salary components
         $gross_salary = $base_salary + $housing_allowance + $transportation_allowance + $incentive + $performance_bonus;
-        $one_day_salary = $gross_salary / 30; // Fixed 30 days calculation (for reference only)
+        $one_day_salary = $gross_salary / 30; // Fixed 30 days calculation
 
-        // Get leaves amount directly from form input instead of calculating
-        $leaves_amt = (float) ($_POST['leaves_amt'] ?? 0);
-        $lto_amt = $lto;
+        $leaves_amt = $leaves * $one_day_salary;
+        $lto_amt = $lto * $one_day_salary;
 
         // Calculate deductions components
         $unpaid_leave_deduction = $leaves_amt + $lto_amt;
@@ -130,6 +129,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
 
         if ($insert_stmt->execute()) {
+            require_once dirname(__DIR__) . '/includes/salary_helpers.php';
+            hrms_ensure_salary_slip($con, (int) $con->insert_id);
             $success = "Salary added successfully!";
         } else {
             throw new Exception("Error saving salary: " . $con->error);
@@ -436,8 +437,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <td>
                                     <div class="form-group">
                                         <label class="form-label">Unpaid Leaves (Days)</label>
-                                        <input type="number" step="0.5" name="leaves" class="form-control" value="0">
-                                        <small class="form-text text-muted">Number of unpaid leave days (amount will be entered separately below)</small>
+                                        <input type="number" step="0.5" name="leaves" id="leaves_days" class="form-control" value="0">
+                                        <small class="form-text text-muted">Auto-filled from approved unpaid leaves or (days in month − present days).</small>
                                     </div>
                                 </td>
                             </tr>
@@ -445,8 +446,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <td>
                                     <div class="form-group">
                                         <label class="form-label">Leaves Deduction Amount (AED)</label>
-                                        <input type="number" step="0.01" name="leaves_amt" class="form-control" value="0" placeholder="Enter amount to deduct">
-                                        <small class="form-text text-muted">Enter the exact amount you want to deduct for unpaid leaves (not calculated automatically)</small>
+                                        <input type="number" step="0.01" name="leaves_amt" id="leaves_amt" class="form-control" value="0" readonly>
+                                        <small class="form-text text-muted">Calculated as: unpaid leave days × (gross salary ÷ 30).</small>
                                     </div>
                                 </td>
                             </tr>
@@ -600,41 +601,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
-        // Auto-fill calculated_days
-        document.querySelector('input[name="salary_month"]').addEventListener('change', function () {
-            const date = new Date(this.value + '-01');
-            const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-            document.querySelector('input[name="calculated_days"]').value = daysInMonth;
-
-            // Reset leaves fields to avoid empty submission
-            document.querySelector('input[name="leaves"]').value = '0';
-            document.querySelector('input[name="leaves_amt"]').value = '0';
-        });
-
-        // Optional: auto-calculate leaves if present_days is updated
-        document.querySelector('input[name="present_days"]').addEventListener('input', function () {
-            const totalDays = parseInt(document.querySelector('input[name="calculated_days"]').value) || 0;
-            const presentDays = parseInt(this.value) || 0;
-            const leaves = Math.max(totalDays - presentDays, 0); // Ensuring it doesn't go negative
-            document.querySelector('input[name="leaves"]').value = leaves;
-        });
-
-        // Add helper function to calculate suggested leaves amount
-        document.querySelector('input[name="leaves"]').addEventListener('input', function() {
-            const leaves = parseFloat(this.value) || 0;
+        function getGrossSalary() {
             const baseSalary = parseFloat(document.querySelector('input[name="base_salary"]').value) || 0;
             const housingAllowance = parseFloat(document.querySelector('input[name="housing_allowance"]').value) || 0;
             const transportationAllowance = parseFloat(document.querySelector('input[name="transportation_allowance"]').value) || 0;
             const incentive = parseFloat(document.querySelector('input[name="incentive"]').value) || 0;
             const performanceBonus = parseFloat(document.querySelector('input[name="performance_bonus"]').value) || 0;
-            
-            if (leaves > 0 && (baseSalary + housingAllowance + transportationAllowance + incentive + performanceBonus) > 0) {
-                const grossSalary = baseSalary + housingAllowance + transportationAllowance + incentive + performanceBonus;
-                const oneDaySalary = grossSalary / 30;
-                const suggestedAmount = leaves * oneDaySalary;
-                
-                // Show suggested amount as placeholder
-                document.querySelector('input[name="leaves_amt"]').placeholder = `Suggested: AED ${suggestedAmount.toFixed(2)}`;
+            return baseSalary + housingAllowance + transportationAllowance + incentive + performanceBonus;
+        }
+
+        function recalcLeavesAmount() {
+            const leaves = parseFloat(document.getElementById('leaves_days').value) || 0;
+            const grossSalary = getGrossSalary();
+            const oneDaySalary = grossSalary > 0 ? grossSalary / 30 : 0;
+            const leavesAmt = leaves * oneDaySalary;
+            document.getElementById('leaves_amt').value = leavesAmt.toFixed(2);
+        }
+
+        function recalcLeavesFromPresentDays() {
+            const totalDays = parseInt(document.querySelector('input[name="calculated_days"]').value) || 0;
+            const presentDays = parseInt(document.querySelector('input[name="present_days"]').value) || 0;
+            if (totalDays > 0 && presentDays >= 0) {
+                document.getElementById('leaves_days').value = Math.max(totalDays - presentDays, 0);
+                recalcLeavesAmount();
+            }
+        }
+
+        function fetchApprovedUnpaidLeaves() {
+            const eid = document.querySelector('select[name="emp_id"]').value;
+            const month = document.querySelector('input[name="salary_month"]').value;
+            if (!eid || !month) {
+                return;
+            }
+
+            fetch('ajax/get_salary_leave_days.php?eid=' + encodeURIComponent(eid) + '&month=' + encodeURIComponent(month))
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (data.ok && parseFloat(data.unpaid_leave_days) > 0) {
+                        document.getElementById('leaves_days').value = data.unpaid_leave_days;
+                        recalcLeavesAmount();
+                    }
+                })
+                .catch(function () { /* keep manual / present-days value */ });
+        }
+
+        document.querySelector('input[name="salary_month"]').addEventListener('change', function () {
+            const date = new Date(this.value + '-01');
+            const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+            document.querySelector('input[name="calculated_days"]').value = daysInMonth;
+            document.getElementById('leaves_days').value = '0';
+            document.getElementById('leaves_amt').value = '0';
+            fetchApprovedUnpaidLeaves();
+        });
+
+        document.querySelector('select[name="emp_id"]').addEventListener('change', fetchApprovedUnpaidLeaves);
+
+        document.querySelector('input[name="present_days"]').addEventListener('input', recalcLeavesFromPresentDays);
+
+        document.getElementById('leaves_days').addEventListener('input', recalcLeavesAmount);
+
+        ['base_salary', 'housing_allowance', 'transportation_allowance', 'incentive', 'performance_bonus'].forEach(function (name) {
+            const el = document.querySelector('input[name="' + name + '"]');
+            if (el) {
+                el.addEventListener('input', recalcLeavesAmount);
             }
         });
     </script>

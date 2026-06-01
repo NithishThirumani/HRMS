@@ -30,7 +30,7 @@ if (isset($_POST['submit']))
       else 
       { 
          echo "<script type='text/javascript'>alert('Incorrect OTP');</script>";
-         echo "<script type='text/javascript'> window.location.href='http://localhost/Employee%20Management%20System/verify_otp.php?email=$em&token=$token';</script>'";
+         echo "<script type='text/javascript'> window.location.href='/emps/verify_otp.php?email=$em&token=$token';</script>'";
       }
     }
   }

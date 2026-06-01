@@ -1,132 +1,97 @@
 <?php
 require_once '../config.php';
 require_once '../connection.php';
+require_once 'includes/auth_user.php';
 session_start();
 
-// Check if user is logged in
 if (!isset($_SESSION['email'])) {
-    header('Location: ../login.php');
+    header('Location: /emps/login.php');
     exit();
 }
 
-// Get user details based on role
-$user = null;
-$user_type = null;
-
-// Check if user is an admin
-$stmt = $con->prepare("SELECT id, email, role FROM admin WHERE email = ? AND status = 'active'");
-$stmt->bind_param("s", $_SESSION['email']);
-$stmt->execute();
-$admin = $stmt->get_result()->fetch_assoc();
-
-if ($admin) {
-    $user = $admin;
-    $user_type = 'admin';
-} else {
-    // Check if user is a department head
-    $stmt = $con->prepare("SELECT dh.id, dh.head_email as email, dh.head_name as full_name, dh.department_id 
-                          FROM department_heads dh 
-                          WHERE dh.head_email = ?");
-    $stmt->bind_param("s", $_SESSION['email']);
-    $stmt->execute();
-    $dept_head = $stmt->get_result()->fetch_assoc();
-
-    if ($dept_head) {
-        $user = $dept_head;
-        $user_type = 'department_head';
-    } else {
-        // Check if user is an employee
-        $stmt = $con->prepare("SELECT e.id, e.eid, e.full_name, e.department_id 
-                              FROM employees e
-                              WHERE e.email = ? AND e.status = 'active'");
-        $stmt->bind_param("s", $_SESSION['email']);
-        $stmt->execute();
-        $employee = $stmt->get_result()->fetch_assoc();
-
-        if ($employee) {
-            $user = $employee;
-            $user_type = 'employee';
-        }
-    }
-}
-
-if (!$user) {
-    header('Location: ../login.php');
+$resolved = esign_resolve_user($con);
+if (!$resolved) {
+    header('Location: /emps/login.php');
     exit();
 }
 
-$user_id = $user['id'];
-$user_name = $user['full_name'] ?? 'User';
-$document_id = $_GET['id'] ?? 0;
+$user = $resolved['user'];
+$user_type = $resolved['user_type'];
+$user_id = (int)$user['id'];
+$user_name = $user['full_name'] ?? ($user['email'] ?? 'User');
+$document_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Get document details with proper authorization
-$query = "SELECT d.*, e.full_name as creator_name,
-          (SELECT GROUP_CONCAT(
-              CONCAT(
-                  e2.full_name, ' (', r.role_name, ')',
-                  ' - ', w2.status,
-                  CASE 
-                      WHEN w2.signed_at IS NOT NULL 
-                      THEN CONCAT(' on ', DATE_FORMAT(w2.signed_at, '%Y-%m-%d %H:%i'))
-                      ELSE ''
-                  END
-              ) SEPARATOR ' → '
-          )
-          FROM esign_workflow w2
-          INNER JOIN employees e2 ON w2.approver_id = e2.id
-          INNER JOIN roles r ON w2.role_id = r.id
-          WHERE w2.document_id = d.id
-          ORDER BY w2.level) as approval_flow
-          FROM esign_documents d 
-          INNER JOIN employees e ON d.created_by = e.id
-          WHERE d.id = ?";
-
-// Add authorization check based on user type
-if ($user_type === 'employee') {
-    $query .= " AND (d.created_by = ? OR EXISTS (
-        SELECT 1 FROM esign_workflow w 
-        WHERE w.document_id = d.id 
-        AND w.approver_id = ?
-    ))";
-} elseif ($user_type === 'department_head') {
-    $query .= " AND EXISTS (
-        SELECT 1 FROM esign_workflow w 
-        INNER JOIN employees e ON w.approver_id = e.id
-        WHERE w.document_id = d.id 
-        AND e.department_id = ?
-    )";
+if ($document_id <= 0) {
+    header('Location: documents.php');
+    exit();
 }
 
-$stmt = $con->prepare($query);
-
-if ($user_type === 'employee') {
-    $stmt->bind_param("iii", $document_id, $user_id, $user_id);
-} elseif ($user_type === 'department_head') {
-    $stmt->bind_param("ii", $document_id, $user['department_id']);
-} else {
-    $stmt->bind_param("i", $document_id);
-}
-
+$stmt = $con->prepare('SELECT * FROM esign_documents WHERE id = ? AND is_deleted = 0 LIMIT 1');
+$stmt->bind_param('i', $document_id);
 $stmt->execute();
 $document = $stmt->get_result()->fetch_assoc();
 
 if (!$document) {
-    header('Location: index.php');
+    header('Location: documents.php');
     exit();
 }
 
-// Get signatures with proper authorization
-$signatures_query = "SELECT w.*, e.full_name as approver_name, r.role_name
-                    FROM esign_workflow w
-                    INNER JOIN employees e ON w.approver_id = e.id
-                    INNER JOIN roles r ON w.role_id = r.id
-                    WHERE w.document_id = ?";
-$stmt = $con->prepare($signatures_query);
-$stmt->bind_param("i", $document_id);
-$stmt->execute();
-$signatures = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-?>
+$allowed = false;
+if ($user_type === 'admin') {
+    $allowed = true;
+} elseif ($user_type === 'employee') {
+    $allowed = ((int)$document['created_by'] === $user_id);
+    if (!$allowed) {
+        $check = $con->prepare('SELECT 1 FROM esign_workflow WHERE document_id = ? AND approver_id = ? LIMIT 1');
+        $check->bind_param('ii', $document_id, $user_id);
+        $check->execute();
+        $allowed = (bool)$check->get_result()->fetch_assoc();
+    }
+} elseif ($user_type === 'department_head') {
+    $check = $con->prepare('SELECT 1 FROM esign_workflow w
+        LEFT JOIN employees e ON w.approver_id = e.id AND w.approver_type IN ("emp", "employee")
+        LEFT JOIN department_heads dh ON w.approver_id = dh.id AND w.approver_type IN ("head", "department_head")
+        WHERE w.document_id = ? AND (e.department_id = ? OR dh.department_id = ?) LIMIT 1');
+    $deptId = (int)$user['department_id'];
+    $check->bind_param('iii', $document_id, $deptId, $deptId);
+    $check->execute();
+    $allowed = (bool)$check->get_result()->fetch_assoc();
+}
 
+if (!$allowed) {
+    header('Location: documents.php');
+    exit();
+}
+
+$document['creator_name'] = esign_creator_name($con, (int)$document['created_by']);
+
+$wfStmt = $con->prepare('SELECT * FROM esign_workflow WHERE document_id = ? ORDER BY level ASC');
+$wfStmt->bind_param('i', $document_id);
+$wfStmt->execute();
+$signatures = $wfStmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+$approvalParts = [];
+foreach ($signatures as $sig) {
+    $name = esign_approver_name($con, (int)$sig['approver_id'], $sig['approver_type'] ?? '');
+    $when = !empty($sig['signed_at']) ? ' on ' . date('Y-m-d H:i', strtotime($sig['signed_at'])) : '';
+    $approvalParts[] = $name . ' - ' . ($sig['status'] ?? 'pending') . $when;
+}
+$document['approval_flow'] = implode(' → ', $approvalParts);
+
+foreach ($signatures as &$sig) {
+    $sig['approver_name'] = esign_approver_name($con, (int)$sig['approver_id'], $sig['approver_type'] ?? '');
+    $sig['role_name'] = ucfirst(str_replace('_', ' ', (string)($sig['approver_type'] ?? 'approver')));
+}
+unset($sig);
+
+$pending_query = "SELECT COUNT(*) AS count FROM esign_documents d
+                 INNER JOIN esign_workflow w ON d.id = w.document_id
+                 WHERE w.approver_id = ? AND w.status = 'pending'";
+$stmt = $con->prepare($pending_query);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$pending_count = $stmt->get_result()->fetch_assoc()['count'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -136,35 +101,20 @@ $signatures = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .signature-container {
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-        .signature-image {
-            max-width: 200px;
-            max-height: 100px;
-        }
-        .typed-signature {
-            font-family: 'Dancing Script', cursive;
-            font-size: 24px;
-        }
+        body { padding-left: 250px; background: #f8f9fa; }
+        .main-content { padding: 20px; }
+        .signature-container { border: 1px solid #dee2e6; border-radius: 4px; padding: 10px; margin-bottom: 15px; }
+        .signature-image { max-width: 200px; max-height: 100px; }
     </style>
 </head>
 <body>
-    <div class="container-fluid py-4">
+    <?php include 'includes/sidebar.php'; ?>
+
+    <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2><?php echo htmlspecialchars($document['title']); ?></h2>
             <div>
-                <a href="javascript:history.back()" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back
-                </a>
-                <?php if ($document['file_type'] === 'pdf'): ?>
-                    <a href="download.php?id=<?php echo $document_id; ?>" class="btn btn-success">
-                        <i class="fas fa-download"></i> Download
-                    </a>
-                <?php endif; ?>
+                <a href="documents.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> All Documents</a>
             </div>
         </div>
 
@@ -172,83 +122,33 @@ $signatures = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             <div class="col-md-8">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <h5 class="card-title">Document Details</h5>
-                        <p class="text-muted"><?php echo htmlspecialchars($document['description']); ?></p>
-                        
-                        <div class="mb-3">
-                            <small class="text-muted">
-                                <i class="fas fa-user"></i> Created by: <?php echo htmlspecialchars($document['creator_name']); ?>
-                            </small>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <small class="text-muted">
-                                <i class="fas fa-clock"></i> Created: <?php echo date('Y-m-d H:i', strtotime($document['created_at'])); ?>
-                            </small>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <small class="text-muted">
-                                <i class="fas fa-random"></i> Approval Flow:<br>
-                                <?php echo htmlspecialchars($document['approval_flow']); ?>
-                            </small>
-                        </div>
-                        
-                        <?php if ($document['file_type'] === 'pdf'): ?>
+                        <p class="text-muted"><?php echo htmlspecialchars($document['description'] ?? ''); ?></p>
+                        <p><small class="text-muted"><i class="fas fa-user"></i> Created by: <?php echo htmlspecialchars($document['creator_name']); ?></small></p>
+                        <p><small class="text-muted"><i class="fas fa-clock"></i> Created: <?php echo date('Y-m-d H:i', strtotime($document['created_at'])); ?></small></p>
+                        <p><small class="text-muted"><i class="fas fa-random"></i> Approval Flow: <?php echo htmlspecialchars($document['approval_flow']); ?></small></p>
+                        <?php if (!empty($document['file_path'])): ?>
                             <iframe src="<?php echo htmlspecialchars($document['file_path']); ?>" width="100%" height="600px"></iframe>
                         <?php else: ?>
-                            <img src="<?php echo htmlspecialchars($document['file_path']); ?>" class="img-fluid" alt="Document">
+                            <div class="alert alert-warning">Document file not found on server.</div>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
-            
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Signatures</h5>
-                        
                         <?php foreach ($signatures as $signature): ?>
                             <div class="signature-container">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div>
-                                        <strong><?php echo htmlspecialchars($signature['approver_name']); ?></strong>
-                                        <div class="text-muted"><?php echo htmlspecialchars($signature['role_name']); ?></div>
+                                <strong><?php echo htmlspecialchars($signature['approver_name']); ?></strong>
+                                <div class="text-muted"><?php echo htmlspecialchars($signature['role_name']); ?></div>
+                                <span class="badge <?php echo $signature['status'] === 'approved' ? 'bg-success' : ($signature['status'] === 'rejected' ? 'bg-danger' : 'bg-warning'); ?>">
+                                    <?php echo ucfirst($signature['status']); ?>
+                                </span>
+                                <?php if (!empty($signature['signature_data'])): ?>
+                                    <div class="mt-2">
+                                        <img src="/emps/esignature/<?php echo htmlspecialchars($signature['signature_data']); ?>" class="signature-image" alt="Signature">
                                     </div>
-                                    <span class="badge <?php 
-                                        echo $signature['status'] === 'approved' ? 'bg-success' : 
-                                            ($signature['status'] === 'rejected' ? 'bg-danger' : 'bg-warning'); 
-                                    ?>">
-                                        <?php echo ucfirst($signature['status']); ?>
-                                    </span>
-                                </div>
-                                
-                                <?php if ($signature['signed_at']): ?>
-                                    <div class="mb-2">
-                                        <small class="text-muted">
-                                            Signed on: <?php echo date('Y-m-d H:i', strtotime($signature['signed_at'])); ?>
-                                        </small>
-                                    </div>
-                                    
-                                    <?php if ($signature['signature_data']): ?>
-                                        <div class="mb-2">
-                                            <?php if ($signature['signature_type'] === 'draw' || $signature['signature_type'] === 'upload'): ?>
-                                                <img src="<?php echo htmlspecialchars($signature['signature_data']); ?>" 
-                                                     class="signature-image" alt="Signature">
-                                            <?php else: ?>
-                                                <div class="typed-signature">
-                                                    <?php echo htmlspecialchars($signature['signature_data']); ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php endif; ?>
-                                    
-                                    <?php if ($signature['comments']): ?>
-                                        <div class="mt-2">
-                                            <small class="text-muted">Comment:</small>
-                                            <p class="mb-0"><?php echo htmlspecialchars($signature['comments']); ?></p>
-                                        </div>
-                                    <?php endif; ?>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
@@ -259,6 +159,5 @@ $signatures = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
-</html> 
+</html>

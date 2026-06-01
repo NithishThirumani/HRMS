@@ -1,32 +1,30 @@
 <?php
-session_start();
-require_once(__DIR__ . '/../../connection.php');
-
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'hr'])) {
-    header('Location: ../../login.php');
-    exit();
-}
+require_once __DIR__ . '/bootstrap_session.php';
+require_once __DIR__ . '/../../connection.php';
 
 if (!isset($_GET['appraisal_id'])) {
     header('Location: view_appraisals.php');
     exit();
 }
 
-$appraisal_id = mysqli_real_escape_string($con, $_GET['appraisal_id']);
+$appraisal_id = (int) $_GET['appraisal_id'];
 
 $sql = "SELECT 
             ea.*,
             e.full_name,
-            e.department,
+            COALESCE(d.name, 'N/A') AS department,
             ap.start_date,
             ap.end_date
         FROM employee_appraisals ea
         INNER JOIN employees e ON ea.employee_id = e.id
+        LEFT JOIN departments d ON e.department_id = d.id
         INNER JOIN appraisal_periods ap ON ea.period_id = ap.period_id
-        WHERE ea.appraisal_id = '$appraisal_id'";
+        WHERE ea.appraisal_id = ?";
 
-$result = mysqli_query($con, $sql);
-$appraisal = mysqli_fetch_assoc($result);
+$stmt = $con->prepare($sql);
+$stmt->bind_param('i', $appraisal_id);
+$stmt->execute();
+$appraisal = $stmt->get_result()->fetch_assoc();
 
 if (!$appraisal) {
     header('Location: view_appraisals.php');

@@ -1,64 +1,10 @@
 <?php
-session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once(__DIR__ . '/../../connection.php');
-require_once(__DIR__ . '/../../classes/AppraisalPeriod.php');  // Updated path
-
-
-
-// Check admin login
-require_once(__DIR__ . '/../../connection.php');
-
-// Simplified query to check admin status using only username
-$check_admin = "SELECT a.id, a.user_name 
-                FROM admin a 
-                WHERE a.user_name = ?";
-
-if (isset($_SESSION['username'])) {  // Changed from user_name to username
-    $stmt = $con->prepare($check_admin);
-    $stmt->bind_param("s", $_SESSION['username']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $admin_data = $result->fetch_assoc();
-        $_SESSION['role'] = 'admin';
-        $_SESSION['user_id'] = $admin_data['id'];
-    } else {
-        echo "Not an admin user. Redirecting...";
-        header('Location: ../../login.php');
-        exit();
-    }
-} else {
-    echo "No session found. Redirecting...";
-    header('Location: ../../login.php');
-    exit();
-}
-
-$debug_query = "SELECT a.id, a.user_name, e.eid, e.full_name 
-                FROM admin a 
-                LEFT JOIN employees e ON a.user_name = e.user_name 
-                WHERE a.user_name = ?";
-
-if (isset($_SESSION['user_name'])) {
-    $stmt = $con->prepare($debug_query);
-    $stmt->bind_param("s", $_SESSION['user_name']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    echo "Admin Check Result:\n";
-    print_r($result->fetch_assoc());
-}
-
-echo "</pre>";
-
-// Continue with regular session check
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    echo "Session check failed. Redirecting...";
-    header('Location: ../../login.php');
-    exit();
-}
+require_once __DIR__ . '/bootstrap_session.php';
+require_once __DIR__ . '/../../connection.php';
+require_once __DIR__ . '/../../classes/AppraisalPeriod.php';
 
 // Check if database connection exists
 global $con;
@@ -294,7 +240,7 @@ $periods = $period->getAllPeriods();
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                    <a class="btn btn-success" href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>
@@ -314,7 +260,8 @@ $periods = $period->getAllPeriods();
     <script src="../js/demo/datatables-demo.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/datetime.js"></script>
-    <script src="../js/appraisal-periods.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../assets/js/manage_periods.js"></script>
 </body>
 
 </html>

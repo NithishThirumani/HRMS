@@ -136,11 +136,11 @@ if(isset($_POST['btn'])) {
                     due_date = '$due_date';";
                 if(mysqli_query($con, $query)) {
                     echo "<script>alert('Project submitted successfully!');</script>";
-                    echo "<script>window.location.href='http://localhost/Employee%20Management%20System/user_panel/project_status.php';</script>";
+                    echo "<script>window.location.href='/emps/user_panel/project_status.php';</script>";
 
                 } else {
                     echo "Error: " . mysqli_error($con);
-                    echo "<script>window.location.href='http://localhost/Employee%20Management%20System/user_panel/project_status.php';</script>";
+                    echo "<script>window.location.href='/emps/user_panel/project_status.php';</script>";
                 }
             } else {
                 echo "Error uploading file.";
@@ -222,7 +222,7 @@ if(isset($_POST['btn'])) {
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/Employee%20Management%20System/user_panel/logout.php">Logout</a>
+                        href="/emps/user_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

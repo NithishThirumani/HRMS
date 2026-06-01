@@ -1,12 +1,9 @@
 <?php
-session_start();
-require_once '../../../connection.php';
-require_once '../../../classes/EmployeeAppraisal.php';
+require_once __DIR__ . '/../bootstrap_session.php';
+require_once dirname(__DIR__, 3) . '/connection.php';
+require_once dirname(__DIR__, 3) . '/classes/EmployeeAppraisal.php';
 
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'hr'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized access']);
-    exit();
-}
+header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $period_id = $_GET['period_id'] ?? '';
@@ -18,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
               (SELECT AVG(hr_rating) FROM appraisal_ratings WHERE appraisal_id = ea.appraisal_id) as final_rating
               FROM employee_appraisals ea
               JOIN employees e ON ea.employee_id = e.id
-              JOIN department d ON e.department_id = d.id
+              JOIN departments d ON e.department_id = d.id
               JOIN appraisal_periods ap ON ea.period_id = ap.period_id
               WHERE 1=1";
 

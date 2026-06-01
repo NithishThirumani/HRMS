@@ -1,12 +1,9 @@
 <?php
-session_start();
-require_once '../../../connection.php';
-require_once '../../../classes/AppraisalCriteria.php';
+require_once __DIR__ . '/../bootstrap_session.php';
+require_once dirname(__DIR__, 3) . '/connection.php';
+require_once dirname(__DIR__, 3) . '/classes/AppraisalCriteria.php';
 
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'hr'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized access']);
-    exit();
-}
+header('Content-Type: application/json');
 
 $criteria = new AppraisalCriteria();
 
@@ -19,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $description = $_POST['description'];
             $weightage = $_POST['weightage'];
             
-            if ($criteria->addCriteria($name, $description, $weightage)) {
+            if ($criteria->addCriteria($name, $description, (int) $weightage)) {
                 echo json_encode(['status' => 'success', 'message' => 'Criteria added successfully']);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Failed to add criteria']);

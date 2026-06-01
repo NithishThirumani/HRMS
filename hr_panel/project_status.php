@@ -18,11 +18,11 @@ if(isset($_GET['del'])) {
     if(mysqli_query($con, $delete_query)) {
         // If deletion is successful, redirect back to the same page
         echo "<script>alert('Record deleted successfully!');</script>";
-        echo "<script>window.location.href='http://localhost/emps/admin_panel/project_status.php';</script>";
+        echo "<script>window.location.href='/emps/admin_panel/project_status.php';</script>";
     } else {
         // If deletion fails, display an error message
         echo "<script>alert('Error deleting record: " . mysqli_error($con) . "');</script>";
-        echo "<script>window.location.href='http://localhost/emps/admin_panel/project_status.php';</script>";
+        echo "<script>window.location.href='/emps/admin_panel/project_status.php';</script>";
     }
 }
 
@@ -145,7 +145,7 @@ if(isset($_GET['del'])) {
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                        href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

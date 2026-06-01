@@ -45,7 +45,7 @@ if (!isset($con)) {
                     <i class="fas fa-key mr-2"></i> Change Password
                 </a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="logout.php">
+                <a class="dropdown-item" href="/emps/admin_panel/logout.php">
                     <i class="fas fa-sign-out-alt mr-2"></i> Logout
                 </a>
             </div>

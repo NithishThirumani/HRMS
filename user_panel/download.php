@@ -28,7 +28,7 @@ if(isset($_GET['project_id'])) {
             }
         } else {
             echo "<script>alert('File not found')</script>";
-            echo "<script>window.location.href='http://localhost/Employee%20Management%20System/user_panel/project_status.php';</script>";
+            echo "<script>window.location.href='/emps/user_panel/project_status.php';</script>";
 
         }
     } else {

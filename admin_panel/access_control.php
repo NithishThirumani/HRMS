@@ -124,7 +124,7 @@ $roles = mysqli_query($con, "SELECT * FROM access_rights ORDER BY department, ro
                 <ul class="nav-menu">
                     <li><a href="index.php">Dashboard</a></li>
                     <li class="menu-active"><a href="access_control.php">Access Control</a></li>
-                    <li><a href="logout.php">Logout</a></li>
+                    <li><a href="/emps/admin_panel/logout.php">Logout</a></li>
                 </ul>
             </nav>
         </div>
@@ -252,8 +252,8 @@ $roles = mysqli_query($con, "SELECT * FROM access_rights ORDER BY department, ro
                                             ?>
                                         </td>
                                         <td>
-                                            <a href="edit_role.php?id=<?php echo $role['id']; ?>" class="btn btn-sm btn-primary">Edit</a>
-                                            <a href="delete_role.php?id=<?php echo $role['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this role?')">Delete</a>
+                                            <a href="/emps/admin_panel/edit_role.php?id=<?php echo (int)$role['id']; ?>" class="btn btn-sm btn-primary">Edit</a>
+                                            <a href="/emps/admin_panel/delete_role.php?id=<?php echo (int)$role['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this role?')">Delete</a>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>

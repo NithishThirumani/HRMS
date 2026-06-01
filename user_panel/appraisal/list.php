@@ -1,56 +1,29 @@
 <?php
-session_start();
-require_once('../../connection.php');
+require_once('../session.php');
 
-// Check if user is logged in
-if (!isset($_SESSION['user_name'])) {
-    header("Location: /emps/login.php");
+$empEid = $_SESSION['eid'] ?? '';
+$empId = (int) ($_SESSION['user_id'] ?? 0);
+
+if ($empEid === '' || $empId <= 0) {
+    header('Location: /emps/login.php');
     exit();
 }
 
-// Get employee details
-$username = $_SESSION['user_name'];
-$query = "SELECT e.id as emp_id, e.eid 
-          FROM employees e 
-          INNER JOIN emp_login el ON e.user_name = el.user_name 
-          WHERE e.user_name = ?";
-$stmt = $con->prepare($query);
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows === 0) {
-    header("Location: /emps/login.php");
-    exit();
-}
-
-$employee = $result->fetch_assoc();
-$emp_id = $employee['eid'];
-
-// Fetch active appraisal assignments
-$query = "SELECT aa.id as assignment_id, 
+$query = "SELECT ea.appraisal_id,
           ap.period_id,
-          DATE_FORMAT(ap.start_date, '%b %Y') as period_start,
-          DATE_FORMAT(ap.end_date, '%b %Y') as period_end,
-          ap.start_date, 
+          DATE_FORMAT(ap.start_date, '%b %Y') AS period_start,
+          DATE_FORMAT(ap.end_date, '%b %Y') AS period_end,
+          ap.start_date,
           ap.end_date,
-          CONCAT('Appraisal Period ', YEAR(ap.start_date)) as period_name,
-          ap.status as period_status,
-          aa.status as assignment_status,
-          CASE 
-              WHEN aa.status = 'completed' THEN 'Completed'
-              WHEN aa.status = 'in_progress' THEN 'In Progress'
-              ELSE 'Pending'
-          END as status_text
-          FROM appraisal_assignments aa
-          JOIN appraisal_periods ap ON aa.period_id = ap.period_id
-          WHERE aa.employee_id = ?
-          AND ap.status = 'active'
-          AND ap.end_date >= CURDATE()
+          ap.status AS period_status,
+          ea.status AS assignment_status
+          FROM employee_appraisals ea
+          JOIN appraisal_periods ap ON ea.period_id = ap.period_id
+          WHERE ea.employee_id = ?
           ORDER BY ap.start_date DESC";
 
 $stmt = $con->prepare($query);
-$stmt->bind_param("s", $emp_id);
+$stmt->bind_param('i', $empId);
 $stmt->execute();
 $assignments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
@@ -97,38 +70,25 @@ $assignments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($assignments as $assignment): ?>
+                                <?php foreach ($assignments as $assignment):
+                                    $status = $assignment['assignment_status'];
+                                    $badge = ($status === 'Completed') ? 'success' : (($status === 'Self_Submitted' || $status === 'HOD_Reviewed') ? 'warning' : 'primary');
+                                    ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($assignment['period_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($assignment['period_start'] . ' - ' . $assignment['period_end']); ?></td>
                                         <td>
                                             <?php echo date('d M Y', strtotime($assignment['start_date'])) . ' - ' .
                                                 date('d M Y', strtotime($assignment['end_date'])); ?>
                                         </td>
                                         <td>
-                                            <span class="badge badge-<?php 
-                                                echo $assignment['assignment_status'] === 'completed' ? 'success' : 
-                                                    ($assignment['assignment_status'] === 'in_progress' ? 'warning' : 'primary'); 
-                                            ?>">
-                                                <?php echo $assignment['status_text']; ?>
+                                            <span class="badge badge-<?php echo $badge; ?>">
+                                                <?php echo htmlspecialchars(str_replace('_', ' ', $status)); ?>
                                             </span>
                                         </td>
                                         <td>
-                                            <?php if ($assignment['assignment_status'] === 'pending'): ?>
-                                                <a href="self_assessment.php?assignment_id=<?php echo $assignment['assignment_id']; ?>" 
-                                                   class="btn btn-primary btn-sm">
-                                                   Start Assessment
-                                                </a>
-                                            <?php elseif ($assignment['assignment_status'] === 'in_progress'): ?>
-                                                <a href="self_assessment.php?assignment_id=<?php echo $assignment['assignment_id']; ?>" 
-                                                   class="btn btn-warning btn-sm">
-                                                   Continue Assessment
-                                                </a>
-                                            <?php else: ?>
-                                                <a href="view_form.php?id=<?php echo $assignment['assignment_id']; ?>" 
-                                                   class="btn btn-info btn-sm">
-                                                   View Details
-                                                </a>
-                                            <?php endif; ?>
+                                            <a href="current_appraisal.php" class="btn btn-primary btn-sm">
+                                                <?php echo ($status === 'Pending') ? 'Start Assessment' : 'View / Continue'; ?>
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -137,7 +97,7 @@ $assignments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     </div>
                 <?php else: ?>
                     <div class="alert alert-info">
-                        No active appraisal assignments available at this time.
+                        No appraisal records yet. Ask HR/Admin to initiate an appraisal cycle for your department.
                     </div>
                 <?php endif; ?>
             </div>

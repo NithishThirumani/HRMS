@@ -5,12 +5,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
-include('download_session.php');
-
-// Get salary ID from URL parameter
-$id = $_GET['id'] ?? null;
-
+include('session.php');
 include('connection.php');
+require_once dirname(__DIR__) . '/includes/salary_helpers.php';
 use Mpdf\Mpdf;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
@@ -113,18 +110,17 @@ function numberToWords($number)
 
 
 if (isset($_GET['id'])) {
-    $id = $_GET['id'];
+    $id = (int) $_GET['id'];
 
-    $stmt = $con->prepare("SELECT MAX(slip_no) as last_no FROM salary_slips");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $slip_data = $result->fetch_assoc();
-    $slip_no = ($slip_data['last_no'] ?? 0) + 1;
+    $ownCheck = $con->prepare('SELECT emp_id FROM sal WHERE id = ? LIMIT 1');
+    $ownCheck->bind_param('i', $id);
+    $ownCheck->execute();
+    $ownRow = $ownCheck->get_result()->fetch_assoc();
+    if (!$ownRow || (string) $ownRow['emp_id'] !== (string) ($_SESSION['eid'] ?? '')) {
+        die('You are not allowed to view this payslip.');
+    }
 
-    // Insert new slip number
-    $stmt = $con->prepare("INSERT INTO salary_slips (slip_no, salary_id) VALUES (?, ?)");
-    $stmt->bind_param("ii", $slip_no, $id);
-    $stmt->execute();
+    hrms_ensure_salary_slip($con, $id);
 
 
 

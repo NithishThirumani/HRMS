@@ -83,11 +83,11 @@ if (!isset($pending_count)) {
                 <i class="fas fa-home"></i>
                 <span>Back to Main</span>
             </a>
-             <a href="https://communik.san-solutions.in/hr_panel/index.php" class="nav-link">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Dashboard</span>
+            <a href="/emps/<?php echo $user_type == 'admin' ? 'admin_panel' : ($user_type == 'hr' ? 'hr_panel' : ($user_type == 'department_head' ? 'hod_panel' : 'user_panel')); ?>/index.php" class="nav-link">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Main Dashboard</span>
             </a>
-            <a href="https://communik.san-solutions.in/login.php" class="nav-link">
+            <a href="/emps/login.php" class="nav-link" onclick="return confirm('Logout?');">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Logout</span>
             </a>

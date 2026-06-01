@@ -92,22 +92,22 @@
                             <?php
                             $query = "SELECT a.*, e.department, e.full_name, e.eid as staff_code 
                                      FROM attendance a 
-                                     INNER JOIN employees e ON a.employee_id = e.id 
-                                     ORDER BY a.date DESC";
+                                     INNER JOIN employees e ON a.eid = e.eid 
+                                     ORDER BY a.attendance_date DESC";
                             $result = mysqli_query($con, $query);
                             
                             while($row = mysqli_fetch_assoc($result)) {
                                 echo "<tr>";
-                                echo "<td><input type='checkbox' class='employee-checkbox' value='".$row['employee_id']."'></td>";
-                                echo "<td>".$row['department']."</td>";
-                                echo "<td>".$row['full_name']."</td>";
-                                echo "<td>".$row['staff_code']."</td>";
-                                echo "<td>".$row['date']."</td>";
-                                echo "<td>".$row['first_in']."</td>";
-                                echo "<td>".$row['last_out']."</td>";
-                                echo "<td>".$row['total_hours']."</td>";
-                                echo "<td class='".strtolower($row['status'])."'>".$row['status']."</td>";
-                                echo "<td>".$row['type']."</td>";
+                                echo "<td><input type='checkbox' class='employee-checkbox' value='".htmlspecialchars($row['eid'])."'></td>";
+                                echo "<td>".htmlspecialchars($row['department'])."</td>";
+                                echo "<td>".htmlspecialchars($row['full_name'])."</td>";
+                                echo "<td>".htmlspecialchars($row['staff_code'])."</td>";
+                                echo "<td>".htmlspecialchars($row['attendance_date'])."</td>";
+                                echo "<td>".htmlspecialchars($row['first_in'] ?? '')."</td>";
+                                echo "<td>".htmlspecialchars($row['last_out'] ?? '')."</td>";
+                                echo "<td>".htmlspecialchars($row['total_hours'] ?? '')."</td>";
+                                echo "<td class='".strtolower(str_replace(' ', '-', $row['status'] ?? ''))."'>".htmlspecialchars($row['status'] ?? '')."</td>";
+                                echo "<td>".htmlspecialchars($row['attendance_type'] ?? '')."</td>";
                                 echo "<td>
                                         <button class='btn btn-sm btn-primary' onclick='editAttendance(".$row['id'].")'>
                                             <i class='fas fa-edit'></i>

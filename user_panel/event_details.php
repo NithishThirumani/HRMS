@@ -3,7 +3,7 @@ if(isset($_GET['id'])) {
     $a = $_GET['id'];
     if(empty($a)) {
         echo "<script>alert('You haven't applied for any events');</script>";
-        echo "<script>window.location.href='http://localhost/Employee%20Management%20System/user_panel/event.php';</script>";
+        echo "<script>window.location.href='/emps/user_panel/event.php';</script>";
     } else {
         $res = mysqli_query($con, "SELECT * FROM event_pt 
         INNER JOIN events ON event_pt.id = events.id 
@@ -13,7 +13,7 @@ if(isset($_GET['id'])) {
             // Proceed with processing the event data
         } else {
             echo "<script>alert('Event not found');</script>";
-            echo "<script>window.location.href='http://localhost/Employee%20Management%20System/user_panel/event.php';</script>";
+            echo "<script>window.location.href='/emps/user_panel/event.php';</script>";
         }
     }
 }
@@ -186,7 +186,7 @@ if(isset($_GET['id'])) {
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/Employee%20Management%20System/user_panel/logout.php">Logout</a>
+                        href="/emps/user_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

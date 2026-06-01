@@ -349,7 +349,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($errors) && $emp_data) { // P
                 $applied_at = date('Y-m-d H:i:s');
                 
                 // Simple direct SQL approach to avoid bind_param issues
-                $emp_id_escaped = $con->real_escape_string($emp_data['id']);
+                $emp_id_escaped = $con->real_escape_string($emp_data['eid']);
                 $emp_name_escaped = $con->real_escape_string($emp_data['full_name']);
                 $leave_type_escaped = $con->real_escape_string($leave_type);
                 $start_date_escaped = $con->real_escape_string($start_date_str);
@@ -458,11 +458,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($errors) && $emp_data) { // P
                 }
                 
                 $_SESSION['success'] = "Leave application submitted successfully! Leave ID: " . $leave_id;
-                header("Location: dashboard.php");
+                // #region agent log
+                @file_put_contents(__DIR__ . '/../../debug-a77d8c.log', json_encode(['sessionId'=>'a77d8c','hypothesisId'=>'A','location'=>'apply.php:461','message'=>'Leave redirect','data'=>['headers_sent'=>headers_sent(),'leave_id'=>$leave_id],'timestamp'=>round(microtime(true)*1000)]).PHP_EOL, FILE_APPEND);
+                // #endregion
+                header("Location: /emps/user_panel/leave_management/dashboard.php");
                 exit();
             } else {
                 $_SESSION['error'] = "Error submitting leave application: " . $con->error;
-                header("Location: apply.php");
+                header("Location: /emps/user_panel/leave_management/apply.php");
                 exit();
             }
             }
@@ -799,7 +802,7 @@ function getEmployeeNameById($con, $emp_id) {
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="./logout.php">Logout</a>
+                    <a class="btn btn-success" href="/emps/user_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

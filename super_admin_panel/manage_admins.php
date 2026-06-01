@@ -149,7 +149,7 @@ $admin_result = mysqli_query($con, $admin_query);
                 <a href="system_settings.php"><i class="fas fa-cogs me-2"></i> System Settings</a>
                 <a href="backup_database.php"><i class="fas fa-database me-2"></i> Database Backup</a>
                 <a href="audit_logs.php"><i class="fas fa-history me-2"></i> Audit Logs</a>
-                <a href="logout.php"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+                <a href="/emps/admin_panel/logout.php"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
             </div>
 
             <!-- Main Content -->

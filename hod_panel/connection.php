@@ -1,5 +1,12 @@
 <?php
-$con = mysqli_connect("localhost", "rltnewmd_communik", "Sanjhi#901130", "rltnewmd_employees_management");
+
+
+require_once dirname(__DIR__) . '/includes/db_connection.php';
+
+
+
+
+// $con = mysqli_connect("localhost", "rltnewmd_communik", "Sanjhi#901130", "rltnewmd_employees_management");
 
 // $q="create database employees_management";
 

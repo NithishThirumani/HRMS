@@ -1,15 +1,10 @@
 <?php
-session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once(__DIR__ . '/../../connection.php');
-require_once(__DIR__ . '/../../classes/AppraisalCriteria.php');
-
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'hr'])) {
-    header('Location: ../../login.php');
-    exit();
-}
+require_once __DIR__ . '/bootstrap_session.php';
+require_once __DIR__ . '/../../connection.php';
+require_once __DIR__ . '/../../classes/AppraisalCriteria.php';
 
 $criteria = new AppraisalCriteria();
 $allCriteria = $criteria->getAllCriteria(false);
@@ -236,7 +231,7 @@ $allCriteria = $criteria->getAllCriteria(false);
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                    <a class="btn btn-success" href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>
@@ -330,7 +325,7 @@ $allCriteria = $criteria->getAllCriteria(false);
     <script src="../js/demo/datatables-demo.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/datetime.js"></script>
-    <script src="../js/criteria.js"></script>
+    <script src="js/criteria-manage.js"></script>
 
 </body>
 

@@ -333,7 +333,7 @@ if (mysqli_num_rows($result) == 0) {
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="https:/emps/admin_panel/logout.php">Logout</a>
+                    <a class="btn btn-success" href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

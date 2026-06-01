@@ -1,12 +1,17 @@
 <?php
+
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
 if (!isset($_SESSION['role']) || strtoupper($_SESSION['role']) !== 'HOD') {
     header('Location: ../login.php');
     exit();
 }
+
 include('session.php');
+
 include('connection.php');
 
 // Get department ID from session with error handling
@@ -685,7 +690,7 @@ if (isset($_GET['del'])) {
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="logout.php">Logout</a>
+                    <a class="btn btn-success" href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

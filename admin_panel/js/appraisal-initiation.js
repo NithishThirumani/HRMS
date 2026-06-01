@@ -12,8 +12,8 @@ $(document).ready(function() {
             url: 'ajax/save_appraisal.php',
             type: 'POST',
             data: formData,
-            success: function(response) {
-                const result = JSON.parse(response);
+            dataType: 'json',
+            success: function(result) {
                 if (result.success) {
                     alert('Appraisal initiated successfully!');
                     window.location.href = 'manage_periods.php';
@@ -21,8 +21,13 @@ $(document).ready(function() {
                     alert('Error: ' + (result.message || 'Failed to initiate appraisal'));
                 }
             },
-            error: function() {
-                alert('An error occurred while initiating the appraisal.');
+            error: function(xhr) {
+                let msg = 'An error occurred while initiating the appraisal.';
+                try {
+                    const r = JSON.parse(xhr.responseText);
+                    if (r.message) msg = r.message;
+                } catch (e) {}
+                alert(msg);
             }
         });
     });

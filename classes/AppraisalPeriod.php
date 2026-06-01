@@ -23,20 +23,21 @@ class AppraisalPeriod {
 
     public function getAllPeriods() {
         $query = "SELECT p.*, 
-                  (SELECT COUNT(*) FROM employees) as total_employees,
-                  (SELECT COUNT(*) FROM appraisal_forms WHERE period_id = p.period_id AND status = 'Completed') as completed_count
+                  (SELECT COUNT(*) FROM employees WHERE LOWER(TRIM(status)) = 'active') as total_employees,
+                  (SELECT COUNT(*) FROM employee_appraisals ea 
+                   WHERE ea.period_id = p.period_id AND ea.status = 'Completed') as completed_count
                   FROM appraisal_periods p
                   ORDER BY p.start_date DESC";
         
         $result = $this->con->query($query);
-        return $result->fetch_all(MYSQLI_ASSOC);
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     }
 
     public function getCurrentPeriod() {
         $query = "SELECT * FROM appraisal_periods 
                  WHERE start_date <= CURDATE() 
                  AND end_date >= CURDATE() 
-                 AND status = 1 
+                 AND status = 'Active' 
                  LIMIT 1";
         
         $result = $this->con->query($query);
@@ -49,55 +50,62 @@ class AppraisalPeriod {
     }
 
     public function addPeriod($startDate, $endDate) {
-        global $con;
-        
         $status = 'Draft';
         $query = "INSERT INTO appraisal_periods (start_date, end_date, status) VALUES (?, ?, ?)";
         
-        $stmt = $con->prepare($query);
+        $stmt = $this->con->prepare($query);
         $stmt->bind_param("sss", $startDate, $endDate, $status);
         
         return $stmt->execute();
     }
 
-    public function initiateAppraisal($startDate, $endDate, $departments, $createdBy) {
-        global $con;
-        
+    public function updatePeriod($periodId, $startDate, $endDate) {
+        $stmt = $this->con->prepare(
+            'UPDATE appraisal_periods SET start_date = ?, end_date = ? WHERE period_id = ?'
+        );
+        $stmt->bind_param('ssi', $startDate, $endDate, $periodId);
+        return $stmt->execute();
+    }
+
+    public function deletePeriod($periodId) {
+        $periodId = (int) $periodId;
+        $this->con->begin_transaction();
         try {
-            $con->begin_transaction();
-            
-            // Insert the appraisal period
-            $status = 'Draft';
-            $query = "INSERT INTO appraisal_periods (start_date, end_date, status, created_by) 
-                     VALUES (?, ?, ?, ?)";
-            $stmt = $con->prepare($query);
-            $stmt->bind_param("sssi", $startDate, $endDate, $status, $createdBy);
+            $ids = [];
+            $stmt = $this->con->prepare('SELECT appraisal_id FROM employee_appraisals WHERE period_id = ?');
+            $stmt->bind_param('i', $periodId);
             $stmt->execute();
-            $periodId = $con->insert_id;
-            
-            // Get employees from selected departments
-            $placeholders = str_repeat('?,', count($departments) - 1) . '?';
-            $employeeQuery = "SELECT eid FROM employees WHERE department IN ($placeholders)";
-            $stmt = $con->prepare($employeeQuery);
-            $stmt->bind_param(str_repeat('s', count($departments)), ...$departments);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            // Create appraisal assignments
-            while ($employee = $result->fetch_assoc()) {
-                $assignQuery = "INSERT INTO appraisal_assignments 
-                              (period_id, employee_id, status) VALUES (?, ?, 'Pending')";
-                $stmt = $con->prepare($assignQuery);
-                $stmt->bind_param("ii", $periodId, $employee['eid']);
-                $stmt->execute();
+            $res = $stmt->get_result();
+            while ($row = $res->fetch_assoc()) {
+                $ids[] = (int) $row['appraisal_id'];
             }
-            
-            $con->commit();
-            return $periodId;
+
+            if ($ids) {
+                $placeholders = implode(',', array_fill(0, count($ids), '?'));
+                $types = str_repeat('i', count($ids));
+                $delRatings = $this->con->prepare("DELETE FROM appraisal_ratings WHERE appraisal_id IN ($placeholders)");
+                $delRatings->bind_param($types, ...$ids);
+                $delRatings->execute();
+            }
+
+            $stmt = $this->con->prepare('DELETE FROM employee_appraisals WHERE period_id = ?');
+            $stmt->bind_param('i', $periodId);
+            $stmt->execute();
+
+            $stmt = $this->con->prepare('DELETE FROM appraisal_assignments WHERE period_id = ?');
+            $stmt->bind_param('i', $periodId);
+            $stmt->execute();
+
+            $stmt = $this->con->prepare('DELETE FROM appraisal_periods WHERE period_id = ?');
+            $stmt->bind_param('i', $periodId);
+            $stmt->execute();
+
+            $this->con->commit();
+            return true;
         } catch (Exception $e) {
-            $con->rollback();
-            throw $e;
+            $this->con->rollback();
+            error_log('deletePeriod: ' . $e->getMessage());
+            return false;
         }
     }
 }
-?>

@@ -32,10 +32,10 @@ if(isset($_GET['edit']))
         // Execute query
         if (mysqli_query($con, $update_query)) {
             echo "<script>alert('Record updated successfully!');</script>";
-            echo "<script>window.location.href='http://localhost/emps/admin_panel/project_status.php';</script>";
+            echo "<script>window.location.href='/emps/admin_panel/project_status.php';</script>";
         } else {
             echo "<script>alert('Error: " . mysqli_error($con) . "');</script>";
-            echo "<script>window.location.href='http://localhost/emps/admin_panel/project_status.php';</script>";
+            echo "<script>window.location.href='/emps/admin_panel/project_status.php';</script>";
         }
     }
 }
@@ -236,7 +236,7 @@ if(isset($_GET['edit']))
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                        href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

@@ -108,7 +108,7 @@ if (isset($_POST['sub'])) {
 			//$db_time = date("Y-m-d G:i:s", strtotime("+ 1 min"));
 			//$_SESSION['db_time'] = $db_time;
 			if (mysqli_query($con, $ins_token)) {
-				$link = "http://localhost/Employee%20Management%20System/verify_otp.php?email=$em&token=$token";
+				$link = "/emps/verify_otp.php?email=$em&token=$token";
 				//echo $link;
 				$mail = new PHPMailer(true);
 				try {

@@ -2,9 +2,15 @@
 require_once 'connection.php';
 require_once 'session.php';
 
-// Check if user is logged in and is admin
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    header("Location: login.php");
+if (!isset($_SESSION['admin_id']) && !isset($_SESSION['user_id'])) {
+    header('Location: /emps/login.php');
+    exit();
+}
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['user_id'] = $_SESSION['admin_id'];
+}
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'super_admin'], true)) {
+    header('Location: /emps/login.php');
     exit();
 }
 
@@ -15,7 +21,15 @@ if ($status_filter != 'all') {
     $sql .= " WHERE status = '" . mysqli_real_escape_string($con, $status_filter) . "'";
 }
 $sql .= " ORDER BY created_at DESC";
-$result = mysqli_query($con, $sql);
+$feedbackResult = mysqli_query($con, $sql);
+
+$feedbacks = [];
+if ($feedbackResult) {
+    while ($row = mysqli_fetch_assoc($feedbackResult)) {
+        $feedbacks[] = $row;
+    }
+    mysqli_free_result($feedbackResult);
+}
 ?>
 
 <head>
@@ -65,7 +79,7 @@ $result = mysqli_query($con, $sql);
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while ($feedback = mysqli_fetch_assoc($result)): ?>
+                            <?php foreach ($feedbacks as $feedback): ?>
                                 <tr>
                                     <td><?php echo date('Y-m-d', strtotime($feedback['created_at'])); ?></td>
                                     <td><?php echo htmlspecialchars($feedback['department']); ?></td>
@@ -97,7 +111,7 @@ $result = mysqli_query($con, $sql);
                                         </form>
                                     </td>
                                 </tr>
-                            <?php endwhile; ?>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>

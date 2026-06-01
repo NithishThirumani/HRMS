@@ -88,7 +88,7 @@ if(isset($_POST['btn'])) {
     $q = "INSERT INTO guest_facts (title, number) VALUES ('$title', '$number')";
     if(mysqli_query($con, $q)) {
         echo "<script>alert('Form submitted successfully!');</script>";
-        echo "<script>window.location.href='http://localhost/Employee%20Management%20System/admin_panel/add_facts.php';</script>";
+        echo "<script>window.location.href='/emps/admin_panel/add_facts.php';</script>";
     } else {
         echo "Error: " . $q . "<br>" . mysqli_error($con);
     }
@@ -123,7 +123,7 @@ if(isset($_POST['btn'])) {
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/Employee%20Management%20System/admin_panel/logout.php">Logout</a>
+                        href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

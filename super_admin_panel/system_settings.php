@@ -144,7 +144,7 @@ $backup_settings = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM backup_s
                 <a href="system_settings.php" class="active"><i class="fas fa-cogs me-2"></i> System Settings</a>
                 <a href="backup_database.php"><i class="fas fa-database me-2"></i> Database Backup</a>
                 <a href="audit_logs.php"><i class="fas fa-history me-2"></i> Audit Logs</a>
-                <a href="logout.php"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+                <a href="/emps/admin_panel/logout.php"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
             </div>
 
             <!-- Main Content -->

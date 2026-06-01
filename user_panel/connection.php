@@ -1,9 +1,10 @@
 <?php
-$con = mysqli_connect("localhost", "rltnewmd_communik", "Sanjhi#901130", "rltnewmd_employees_management");
+require_once dirname(__DIR__) . '/includes/db_connection.php';
+// $con = mysqli_connect("localhost", "rltnewmd_communik", "Sanjhi#901130", "rltnewmd_employees_management");
 
-if (!$con) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+// if (!$con) {
+//     die("Connection failed: " . mysqli_connect_error());
+// }
 
 // Set charset to ensure proper character handling
 mysqli_set_charset($con, "utf8mb4");
@@ -184,9 +185,3 @@ $q = "CREATE TABLE access_rights (
 // {
 //     echo "Table is not created";
 // }
-
-
-
-
-
-?>

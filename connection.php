@@ -22,24 +22,7 @@ error_reporting(E_ALL);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/logs/php_errors.log');
 
-// Database Connection with error handling
-try {
-    
-    $con = mysqli_connect("localhost", "root", "Nizam123$", "EMPS");
-    
-    if (!$con) {
-        throw new Exception("Connection failed: " . mysqli_connect_error());
-    }
-
-    // Set charset to ensure proper encoding
-    if (!mysqli_set_charset($con, "utf8mb4")) {
-        throw new Exception("Error setting charset: " . mysqli_error($con));
-    }
-
-} catch (Exception $e) {
-    error_log("[" . date('Y-m-d H:i:s') . "] Database Error: " . $e->getMessage());
-    die("Database connection error. Please try again later.");
-}
+require_once __DIR__ . '/includes/db_connection.php';
 
 // URL helper functions
 if (!function_exists('getUrl')) {

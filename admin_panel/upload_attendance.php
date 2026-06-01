@@ -30,32 +30,22 @@
                                 <label>Upload Excel/CSV File</label>
                                 <input type="file" class="form-control" name="attendance_file" accept=".xlsx,.xls,.csv" required>
                             </div>
-                            <div class="alert alert-info">
-                                <h6>File Format Requirements:</h6>
-                                <p>Please ensure your Excel/CSV file contains the following columns:</p>
-                                <ul>
-                                    <li>Full Name</li>
-                                    <li>Employee Code</li>
-                                    <li>Visa Under</li>
-                                    <li>Manager/TL</li>
-                                    <li>Status</li>
-                                    <li>Designation</li>
-                                    <li>Client Team</li>
-                                    <li>Mobile No</li>
-                                    <li>Email</li>
-                                    <li>Date of Joining</li>
-                                    <li>Offer Letter Issued</li>
-                                    <li>Payroll Start Date</li>
-                                    <li>Total Absent Days</li>
-                                    <li>Late Entries</li>
-                                    <li>Sick Leave</li>
-                                    <li>Approved Leave</li>
-                                    <li>Half Days</li>
-                                    <li>Annual Leave</li>
-                                    <li>On-Time Entries</li>
-                                    <li>Payable Days</li>
-                                </ul>
+                            <div class="form-group">
+                                <label>Attendance date <span class="text-muted">(required for employee list files)</span></label>
+                                <input type="date" class="form-control" name="import_date" value="<?php echo date('Y-m-d'); ?>">
+                                <small class="form-text text-muted">If your file is an <strong>employee list</strong> (Employee ID, Name, Department…), pick the date to mark attendance for all listed employees.</small>
                             </div>
+                            <div class="alert alert-info">
+                                <h6>Supported formats</h6>
+                                <p><strong>Option A — Attendance file:</strong> columns <code>eid</code>, <code>attendance_date</code>, <code>status</code></p>
+                                <p class="mb-0"><strong>Option B — Employee list</strong> (like <em>employee list.xlsx</em>): columns <code>Employee ID</code>, etc. + choose <strong>Attendance date</strong> above. Status column <code>Active</code> = Present.</p>
+                            </div>
+                            <?php if (!empty($_SESSION['success'])): ?>
+                                <div class="alert alert-success"><?php echo htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?></div>
+                            <?php endif; ?>
+                            <?php if (!empty($_SESSION['error'])): ?>
+                                <div class="alert alert-danger"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></div>
+                            <?php endif; ?>
                             <button type="submit" class="btn btn-primary">Upload Attendance Data</button>
                         </form>
                     </div>

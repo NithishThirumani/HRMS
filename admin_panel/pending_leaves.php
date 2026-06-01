@@ -1,5 +1,7 @@
 <?php
 include('session.php');
+require_once dirname(__DIR__) . '/includes/hrms_employees.php';
+$leaveEmpJoin = hrms_leave_employee_join('l', 'e');
 ?>
 
 <!DOCTYPE html>
@@ -272,44 +274,46 @@ include('session.php');
                         </thead>
                         <tbody>
                             <?php
-                            // Determine which leaves to show based on user role
-                            $user_role = $_SESSION['role']; // Assuming role is stored in session
-                            $department = $_SESSION['department'] ?? ''; // Assuming department is stored in session
-                            
-                            if ($user_role == 'hod') {
-                                // HOD sees leaves from their department pending HOD approval
-                                $query = "SELECT l.*, e.full_name, d.name as department, 
-                                        COALESCE(l.hod_status, 'pending') as hod_status,
-                                        COALESCE(l.hr_status, 'pending') as hr_status
-                                    FROM leaves l 
-                                    JOIN employees e ON l.emp_id = e.id 
+                            $user_role = strtolower($_SESSION['role'] ?? 'admin');
+
+                            if ($user_role === 'hod') {
+                                $query = "SELECT l.*, e.full_name, d.name AS department,
+                                        COALESCE(l.hod_status, 'pending') AS hod_status,
+                                        COALESCE(l.hr_status, 'pending') AS hr_status
+                                    FROM leaves l
+                                    JOIN employees e ON {$leaveEmpJoin}
                                     JOIN departments d ON e.department_id = d.id
-                                    WHERE l.hod_status = 'pending' AND e.department_id = '$department'
+                                    WHERE l.hod_status = 'pending'
+                                      AND LOWER(l.status) NOT IN ('rejected', 'approved')
                                     ORDER BY l.applied_at DESC";
-                            } elseif ($user_role == 'hr') {
-                                $query = "SELECT l.*, e.full_name, d.name as department,
-                                        COALESCE(l.hod_status, 'pending') as hod_status,
-                                        COALESCE(l.hr_status, 'pending') as hr_status
-                                    FROM leaves l 
-                                    JOIN employees e ON l.emp_id = e.id 
+                            } elseif ($user_role === 'hr') {
+                                $query = "SELECT l.*, e.full_name, d.name AS department,
+                                        COALESCE(l.hod_status, 'pending') AS hod_status,
+                                        COALESCE(l.hr_status, 'pending') AS hr_status
+                                    FROM leaves l
+                                    JOIN employees e ON {$leaveEmpJoin}
                                     JOIN departments d ON e.department_id = d.id
-                                    WHERE (l.hod_status = 'approved' AND l.hr_status = 'pending')
-                                       OR (l.hr_status = 'pending') 
+                                    WHERE l.hr_status = 'pending'
+                                      AND LOWER(l.status) NOT IN ('rejected', 'approved')
                                     ORDER BY l.applied_at DESC";
                             } else {
-                                $query = "SELECT l.*, e.full_name, d.name as department,
-                                        COALESCE(l.hod_status, 'pending') as hod_status,
-                                        COALESCE(l.hr_status, 'pending') as hr_status
-                                    FROM leaves l 
-                                    JOIN employees e ON l.emp_id = e.id 
+                                // Admin / super_admin: show all pending leave requests
+                                $query = "SELECT l.*, e.full_name, d.name AS department,
+                                        COALESCE(l.hod_status, 'pending') AS hod_status,
+                                        COALESCE(l.hr_status, 'pending') AS hr_status
+                                    FROM leaves l
+                                    JOIN employees e ON {$leaveEmpJoin}
                                     JOIN departments d ON e.department_id = d.id
-                                    WHERE (l.hr_status = 'approved')
+                                    WHERE LOWER(l.status) IN ('pending', 'recommended')
+                                      AND (l.hod_status = 'pending' OR l.hr_status = 'pending')
                                     ORDER BY l.applied_at DESC";
                             }
 
-
                             $result = mysqli_query($con, $query);
-                            while ($row = mysqli_fetch_assoc($result)) {
+                            if (!$result) {
+                                echo '<tr><td colspan="9" class="text-danger">Query error: ' . htmlspecialchars(mysqli_error($con)) . '</td></tr>';
+                            }
+                            while ($result && ($row = mysqli_fetch_assoc($result))) {
                                 ?>
                                 <tr>
                                     <td><?php echo $row['full_name']; ?></td>
@@ -320,15 +324,11 @@ include('session.php');
                                     <td><?php echo $row['total_days']; ?></td>
                                     <td><?php echo $row['reason']; ?></td>
                                     <td>
-                                        <?php if ($user_role == 'hod'): ?>
-                                            <span class="hr-status-<?php echo strtolower($row['hod_status']); ?>">
-                                                <i class="fas fa-circle"></i> HOD: <?php echo $row['hod_status']; ?>
-                                            </span>
-                                        <?php elseif ($user_role == 'hr'): ?>
-                                            <span class="hr-status-<?php echo strtolower($row['hr_status']); ?>">
-                                                <i class="fas fa-circle"></i> HR: <?php echo $row['hr_status']; ?>
-                                            </span>
-                                        <?php endif; ?>
+                                        <span class="badge bg-secondary"><?php echo htmlspecialchars($row['status']); ?></span>
+                                        <div class="small mt-1">
+                                            HOD: <?php echo htmlspecialchars($row['hod_status']); ?> |
+                                            HR: <?php echo htmlspecialchars($row['hr_status']); ?>
+                                        </div>
                                     </td>
                                     <td>
                                         <button class="btn btn-success btn-sm"
@@ -392,7 +392,12 @@ include('session.php');
         }
 
         $(document).ready(function () {
-            $('#pendingLeaves').DataTable();
+            var table = $('#pendingLeaves').DataTable({
+                stateSave: false,
+                order: [[3, 'desc']],
+                pageLength: 25
+            });
+            table.search('').draw();
         });
     </script>
 
@@ -416,7 +421,7 @@ include('session.php');
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                    <a class="btn btn-success" href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

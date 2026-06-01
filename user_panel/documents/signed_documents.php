@@ -88,7 +88,7 @@ if (!empty($signedDocuments)) {
 
 <body id="page-top">
     <?php
-    $base_path = 'http://localhost/emps/';  // Add this line
+    $base_path = '/emps/';  // Add this line
     include('../sidebar.php');
     ?>
     <?php include('../topbar.php'); ?>
@@ -149,7 +149,7 @@ if (!empty($signedDocuments)) {
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                    <a class="btn btn-success" href="/emps/user_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

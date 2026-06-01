@@ -16,22 +16,22 @@ if(isset($_GET['op']) && isset($_GET['np']) && isset($_GET['cp'])) {
 
     if ($count == 0) {
         echo "<script>alert('Old password is incorrect');</script>";
-        echo "<script>window.location.href='http://localhost/emps/user_panel/change_password.php';</script>";
+        echo "<script>window.location.href='/emps/user_panel/change_password.php';</script>";
     } else {
         if ($new_password == $confirm_password) {
             $update_query = "UPDATE employees SET password = '$new_password' WHERE user_name = '$un'";
             if (mysqli_query($con, $update_query)) {
                 echo "<script>alert('Password updated successfully');</script>";
-                echo "<script>window.location.href='http://localhost/emps/user_panel/change_password.php';</script>";
+                echo "<script>window.location.href='/emps/user_panel/change_password.php';</script>";
 
             } else {
                 echo "<script>alert('Error in updating Password');</script>";
-                echo "<script>window.location.href='http://localhost/emps/user_panel/change_password.php';</script>";
+                echo "<script>window.location.href='/emps/user_panel/change_password.php';</script>";
 
             }
         } else {
             echo "<script>alert('New password and confirm password do not match');</script>";
-            echo "<script>window.location.href='http://localhost/emps/user_panel/change_password.php';</script>";
+            echo "<script>window.location.href='/emps/user_panel/change_password.php';</script>";
 
         }
     }
@@ -161,7 +161,7 @@ if(isset($_GET['op']) && isset($_GET['np']) && isset($_GET['cp'])) {
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/emps/user_panel/logout.php">Logout</a>
+                        href="/emps/user_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

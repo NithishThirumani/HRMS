@@ -25,7 +25,7 @@ if(isset($_POST['submit'])) {
 
         if(mysqli_query($con, $insert_query)) {
             echo "<script>alert('Project assigned successfully!');</script>";
-            echo "<script>window.location.href='http://localhost/emps/admin_panel/project_status.php';</script>";
+            echo "<script>window.location.href='/emps/admin_panel/project_status.php';</script>";
         } else {
             echo "<script>alert('Error: ".mysqli_error($con)."');</script>";
         }
@@ -203,7 +203,7 @@ if(isset($_POST['submit'])) {
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                        href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

@@ -1,6 +1,7 @@
 <?php
 require_once '../../config.php';
 require_once '../../connection.php';
+require_once '../includes/auth_user.php';
 session_start();
 
 // Check if user is logged in
@@ -10,50 +11,13 @@ if (!isset($_SESSION['email'])) {
 }
 
 // Get user details based on role
-$user = null;
-$user_type = null;
-
-// Check if user is an admin
-$stmt = $con->prepare("SELECT id, email, role FROM admin WHERE email = ? AND status = 'active'");
-$stmt->bind_param("s", $_SESSION['email']);
-$stmt->execute();
-$admin = $stmt->get_result()->fetch_assoc();
-
-if ($admin) {
-    $user = $admin;
-    $user_type = 'admin';
-} else {
-    // Check if user is a department head
-    $stmt = $con->prepare("SELECT dh.id, dh.head_email as email, dh.head_name as full_name, dh.department_id 
-                          FROM department_heads dh 
-                          WHERE dh.head_email = ?");
-    $stmt->bind_param("s", $_SESSION['email']);
-    $stmt->execute();
-    $dept_head = $stmt->get_result()->fetch_assoc();
-
-    if ($dept_head) {
-        $user = $dept_head;
-        $user_type = 'department_head';
-    } else {
-        // Check if user is an employee
-        $stmt = $con->prepare("SELECT e.id, e.eid, e.full_name, e.department_id 
-                              FROM employees e
-                              WHERE e.email = ? AND e.status = 'active'");
-        $stmt->bind_param("s", $_SESSION['email']);
-        $stmt->execute();
-        $employee = $stmt->get_result()->fetch_assoc();
-
-        if ($employee) {
-            $user = $employee;
-            $user_type = 'employee';
-        }
-    }
-}
-
-if (!$user) {
+$resolved = esign_resolve_user($con);
+if (!$resolved) {
     header('Location: ../../login.php');
     exit();
 }
+$user = $resolved['user'];
+$user_type = $resolved['user_type'];
 
 // Only admin and HR can create documents
 if ($user_type != 'admin' && $user_type != 'hr') {
@@ -103,18 +67,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Create upload directory if it doesn't exist
-    $upload_dir = '../uploads/documents/';
+    $upload_dir = __DIR__ . '/../uploads/documents/';
     if (!file_exists($upload_dir)) {
         mkdir($upload_dir, 0777, true);
     }
 
-    // Generate unique filename
     $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
     $filename = uniqid() . '_' . time() . '.' . $file_extension;
-    $filepath = $upload_dir . $filename;
+    $disk_path = $upload_dir . $filename;
+    $filepath = 'uploads/documents/' . $filename;
 
     // Move uploaded file
-    if (!move_uploaded_file($file['tmp_name'], $filepath)) {
+    if (!move_uploaded_file($file['tmp_name'], $disk_path)) {
         $_SESSION['error'] = "Failed to upload file. Please try again.";
         header('Location: ../create.php');
         exit();
@@ -124,45 +88,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $con->begin_transaction();
 
     try {
-        // Insert document record
-        $stmt = $con->prepare("INSERT INTO esign_documents (title, document_type, description, file_path, created_by, created_at, status, expiry_date) VALUES (?, ?, ?, ?, ?, NOW(), 'pending', ?)");
-        
+        $total_levels = count($_POST['approvers']);
+        if ($total_levels < 1) {
+            throw new Exception('At least one approver is required.');
+        }
+
         $expiry_date = null;
         if (isset($_POST['has_expiry']) && !empty($_POST['expiry_date'])) {
             $expiry_date = $_POST['expiry_date'];
         }
+
+        $file_type = 'pdf';
+        $stmt = $con->prepare("INSERT INTO esign_documents (title, document_type, description, file_path, file_type, created_by, status, current_level, total_levels, expiry_date) VALUES (?, ?, ?, ?, ?, ?, 'pending', 1, ?, ?)");
         
-        $stmt->bind_param("ssssss", 
+        $stmt->bind_param("sssssiis", 
             $_POST['title'],
             $_POST['document_type'],
             $_POST['description'],
             $filepath,
+            $file_type,
             $user['id'],
+            $total_levels,
             $expiry_date
         );
         
         if (!$stmt->execute()) {
-            throw new Exception("Failed to create document record.");
+            throw new Exception('Failed to create document record: ' . $stmt->error);
         }
 
         $document_id = $con->insert_id;
 
-        // Create approval workflow
-        $stmt = $con->prepare("INSERT INTO esign_workflow (document_id, approver_id, approver_type, level, status, created_at) VALUES (?, ?, ?, ?, 'pending', NOW())");
+        // Create approval workflow (role_id is required in DB)
+        $stmt = $con->prepare("INSERT INTO esign_workflow (document_id, level, approver_id, role_id, approver_type, status, created_at) VALUES (?, ?, ?, ?, ?, 'pending', NOW())");
         
         foreach ($_POST['approvers'] as $index => $approver) {
-            // Parse approver type and ID
-            list($type, $id) = explode('_', $approver);
+            $parts = explode('_', (string)$approver, 2);
+            if (count($parts) !== 2) {
+                throw new Exception('Invalid approver selected.');
+            }
+            list($type, $id) = $parts;
+            $approverId = (int)$id;
+            $roleId = esign_approver_role_id($con, $type, $approverId);
             
-            $stmt->bind_param("issi", 
+            $stmt->bind_param("iiiis", 
                 $document_id,
-                $id,
-                $type,
-                $index
+                $index,
+                $approverId,
+                $roleId,
+                $type
             );
             
             if (!$stmt->execute()) {
-                throw new Exception("Failed to create approval workflow.");
+                throw new Exception("Failed to create approval workflow: " . $stmt->error);
             }
         }
 
@@ -170,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $con->commit();
 
         $_SESSION['success'] = "Document created successfully.";
-        header('Location: ../index.php');
+        header('Location: ../documents.php');
         exit();
 
     } catch (Exception $e) {
@@ -178,8 +155,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $con->rollback();
         
         // Delete uploaded file
-        if (file_exists($filepath)) {
-            unlink($filepath);
+        if (file_exists($disk_path)) {
+            unlink($disk_path);
         }
         
         $_SESSION['error'] = "Error: " . $e->getMessage();

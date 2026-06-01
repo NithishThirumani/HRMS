@@ -81,9 +81,9 @@ $basePath = (strpos($_SERVER['REQUEST_URI'], 'documents/') !== false) ? '../' : 
                         $stmt = mysqli_prepare($con, $query);
                         mysqli_stmt_bind_param($stmt, "s", $admin_email);
                         mysqli_stmt_execute($stmt);
-                        $result = mysqli_stmt_get_result($stmt);
+                        $profileResult = mysqli_stmt_get_result($stmt);
                         
-                        if ($row = mysqli_fetch_assoc($result)) {
+                        if ($row = mysqli_fetch_assoc($profileResult)) {
                             $display_name = htmlspecialchars($row['user_name']);
                             $firstLetter = strtoupper(substr($display_name, 0, 1));
                         ?>

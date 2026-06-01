@@ -169,7 +169,7 @@ if (isset($_POST['submit'])) {
 
         if (mysqli_query($con, $ins)) {
             echo "<script>alert('Form updated successfully!');</script>";
-            echo "<script>window.location.href='http://localhost/emps/admin_panel/Manage_profile.php';</script>";
+            echo "<script>window.location.href='/emps/admin_panel/Manage_profile.php';</script>";
         } else {
             echo "Error: ";
         }
@@ -221,7 +221,7 @@ if (isset($_POST['submit'])) {
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                        href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

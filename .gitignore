@@ -1,0 +1,29 @@
+# Logs and debug
+logs/
+*.log
+debug-*.log
+
+# Session / test artifacts
+cookies_*.txt
+headers_*.txt
+
+# User-uploaded documents (may contain PII)
+**/uploads/documents/
+**/uploads/profile_pics/
+**/doc_uploads/
+esignature/uploads/
+
+# Dangerous maintenance scripts
+reset_admin_passwords.php
+reset_employee_passwords.php
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Environment (if added later)
+.env
+.env.local

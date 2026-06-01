@@ -24,8 +24,8 @@ if (!defined('PROTECTED_DIRS')) define('PROTECTED_DIRS', [
 ]);
 
 // Database configuration
-if (!defined('DB_HOST')) define('DB_HOST', 'localhost');
+if (!defined('DB_HOST')) define('DB_HOST', 'db');
 if (!defined('DB_USER')) define('DB_USER', 'root');
-if (!defined('DB_PASS')) define('DB_PASS', '');
-if (!defined('DB_NAME')) define('DB_NAME', 'emps');
+if (!defined('DB_PASS')) define('DB_PASS', 'hrms_secret');
+if (!defined('DB_NAME')) define('DB_NAME', 'EMPS');;
 ?>

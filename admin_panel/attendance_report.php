@@ -37,10 +37,12 @@
                                 <select class="form-control" name="department">
                                     <option value="">All Departments</option>
                                     <?php
-                                    $dept_query = "SELECT DISTINCT department FROM employees ORDER BY department";
+                                    $dept_query = "SELECT DISTINCT name FROM departments ORDER BY name";
                                     $dept_result = mysqli_query($con, $dept_query);
-                                    while($dept = mysqli_fetch_assoc($dept_result)) {
-                                        echo "<option value='".$dept['department']."'>".$dept['department']."</option>";
+                                    if ($dept_result) {
+                                        while($dept = mysqli_fetch_assoc($dept_result)) {
+                                            echo "<option value='".htmlspecialchars($dept['name'])."'>".htmlspecialchars($dept['name'])."</option>";
+                                        }
                                     }
                                     ?>
                                 </select>
@@ -54,8 +56,10 @@
                                     <?php
                                     $emp_query = "SELECT eid, full_name FROM employees ORDER BY full_name";
                                     $emp_result = mysqli_query($con, $emp_query);
-                                    while($emp = mysqli_fetch_assoc($emp_result)) {
-                                        echo "<option value='".$emp['eid']."'>".$emp['full_name']."</option>";
+                                    if ($emp_result) {
+                                        while($emp = mysqli_fetch_assoc($emp_result)) {
+                                            echo "<option value='".htmlspecialchars($emp['eid'])."'>".htmlspecialchars($emp['full_name'])."</option>";
+                                        }
                                     }
                                     ?>
                                 </select>
@@ -184,6 +188,7 @@
     $(document).ready(function() {
         // Initialize date range picker
         $('#dateRange').daterangepicker({
+            locale: { format: 'DD/MM/YYYY' },
             startDate: moment().startOf('month'),
             endDate: moment().endOf('month'),
             ranges: {
@@ -207,9 +212,22 @@
             $.ajax({
                 url: 'get_attendance_report.php',
                 method: 'POST',
+                dataType: 'json',
                 data: $(this).serialize(),
                 success: function(response) {
+                    if (!response.ok) {
+                        alert(response.error || 'Could not load report');
+                        return;
+                    }
                     updateReport(response);
+                },
+                error: function(xhr) {
+                    var msg = 'Failed to load attendance report.';
+                    try {
+                        var r = JSON.parse(xhr.responseText);
+                        if (r.error) msg = r.error;
+                    } catch (err) {}
+                    alert(msg);
                 }
             });
         });

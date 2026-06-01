@@ -177,7 +177,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="http://localhost/Employee%20Management%20System/user_panel/logout.php">Logout</a>
+                    <a class="btn btn-success" href="/emps/user_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>
@@ -220,7 +220,7 @@ if (isset($_POST['submit'])) {
     alert('Submitted successfully!');
 </script>";
         echo "<script>
-    window.location.href = 'http://localhost/Employee%20Management%20System/user_panel/tours.php';
+    window.location.href = '/emps/user_panel/tours.php';
 </script>";
     } else {
         echo "Error: " . mysqli_error($con);

@@ -3,31 +3,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Database credentials
-$host = "localhost";
-$user = "rltnewmd_communik";
-$password = "Sanjhi#901130";
-$database = "rltnewmd_employees_management";
-
-// Create connection
-$con = mysqli_connect($host, $user, $password, $database);
-
-// Check connection
-if (!$con) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-// Set charset to utf8mb4
-if (!mysqli_set_charset($con, "utf8mb4")) {
-    die("Error setting charset: " . mysqli_error($con));
-}
-
-// Test query
-$test_query = "SELECT 1";
-$test_result = mysqli_query($con, $test_query);
-if (!$test_result) {
-    die("Database connection test failed: " . mysqli_error($con));
-}
+require_once dirname(__DIR__) . '/includes/db_connection.php';
 
 // $q="create database employees_management";
 

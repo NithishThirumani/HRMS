@@ -4,10 +4,7 @@ require_once '../../connection.php';
 require_once '../../classes/EmployeeAppraisal.php';
 require_once '../../classes/AppraisalRating.php';
 
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'hr'])) {
-    header('Location: ../../login.php');
-    exit();
-}
+require_once __DIR__ . '/bootstrap_session.php';
 
 if (!isset($_GET['id'])) {
     header('Location: view_appraisals.php');

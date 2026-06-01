@@ -17,7 +17,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: 'appraisal/ajax/period_actions.php',
+            url: 'ajax/period_actions.php',
             type: 'POST',
             data: $(this).serialize() + '&action=add',
             dataType: 'json',
@@ -64,7 +64,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: 'appraisal/ajax/period_actions.php',
+            url: 'ajax/period_actions.php',
             type: 'POST',
             data: $(this).serialize() + '&action=edit',
             dataType: 'json',
@@ -106,7 +106,7 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: 'appraisal/ajax/period_actions.php',
+                    url: 'ajax/period_actions.php',
                     type: 'POST',
                     data: {
                         action: 'delete',

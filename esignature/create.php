@@ -14,7 +14,7 @@ $user = null;
 $user_type = null;
 
 // Check if user is an admin
-$stmt = $con->prepare("SELECT id, email, role FROM admin WHERE email = ? AND status = 'active'");
+$stmt = $con->prepare("SELECT id, email, role FROM admin WHERE email = ? AND LOWER(status) = 'active'");
 $stmt->bind_param("s", $_SESSION['email']);
 $stmt->execute();
 $admin = $stmt->get_result()->fetch_assoc();
@@ -38,7 +38,7 @@ if ($admin) {
         // Check if user is an employee
         $stmt = $con->prepare("SELECT e.id, e.eid, e.full_name, e.department_id 
                               FROM employees e
-                              WHERE e.email = ? AND e.status = 'active'");
+                              WHERE e.email = ? AND LOWER(e.status) = 'active'");
         $stmt->bind_param("s", $_SESSION['email']);
         $stmt->execute();
         $employee = $stmt->get_result()->fetch_assoc();

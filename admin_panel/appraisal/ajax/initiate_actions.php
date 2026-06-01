@@ -3,10 +3,7 @@ session_start();
 require_once '../../../connection.php';
 require_once '../../../classes/AppraisalPeriod.php';
 
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'hr'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized access']);
-    exit();
-}
+require_once __DIR__ . '/../bootstrap_session.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $start_date = $_POST['start_date'];

@@ -4,7 +4,7 @@
 
     <div class="container">
         <div class="copyright">
-            &copy; Copyright <a href=" http://localhost/emps/index.php">
+            &copy; Copyright <a href=" /emps/index.php">
                 <strong>
                     San Solutions
                 </strong>

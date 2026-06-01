@@ -20,7 +20,7 @@ $em = $_SESSION['em'];
         $ins_token = "INSERT INTO token1 VALUES ('','$em','$s_time','$token',$otp)";
         
         if (mysqli_query($con, $ins_token)) {
-            $link = "http://localhost/Employee%20Management%20System/verify_otp.php?email=$em&token=$token";
+            $link = "/emps/verify_otp.php?email=$em&token=$token";
 
             $mail = new PHPMailer(true);
             try {
@@ -46,7 +46,7 @@ $em = $_SESSION['em'];
 
                 if ($mail->send()) {
                     echo "<script type='text/javascript'>alert('Password reset link has been sent to your registered email. Please check the spam folder as well.');</script>";
-                    echo "<script type='text/javascript'> window.location.href='http://localhost/Employee%20Management%20System/login.php';</script>'";
+                    echo "<script type='text/javascript'> window.location.href='/emps/login.php';</script>'";
                 }
             } catch (Exception $e) {
                 echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";

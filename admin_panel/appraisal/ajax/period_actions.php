@@ -1,12 +1,9 @@
 <?php
-session_start();
-require_once '../../../connection.php';
-require_once '../../../classes/AppraisalPeriod.php';
+require_once __DIR__ . '/../bootstrap_session.php';
+require_once dirname(__DIR__, 3) . '/connection.php';
+require_once dirname(__DIR__, 3) . '/classes/AppraisalPeriod.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized access']);
-    exit();
-}
+header('Content-Type: application/json');
 
 $period = new AppraisalPeriod();
 

@@ -192,7 +192,7 @@ if (isset($_POST['submit'])) {
 
             if (mysqli_query($con, $ins)) {
                 echo "<script>alert('Registered successfully!');</script>";
-                echo "<script>window.location.href='http://localhost/Employee%20Management%20System/admin_panel/Manage_profile.php';</script>";
+                echo "<script>window.location.href='/emps/admin_panel/Manage_profile.php';</script>";
             }
         }
     }
@@ -240,7 +240,7 @@ if (isset($_POST['submit'])) {
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/Employee%20Management%20System/admin_panel/logout.php">Logout</a>
+                        href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

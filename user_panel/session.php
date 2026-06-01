@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/includes/hrms_session.php';
+hrms_start_session('employee');
 include('connection.php');
 
 // Check if user is logged in with all required session variables
@@ -40,7 +41,7 @@ $eid = $_SESSION['eid'];
 $emp_query = "SELECT e.*, el.status as login_status 
              FROM employees e 
              JOIN emp_login el ON e.eid = el.emp_id 
-             WHERE e.eid = ? AND el.status = 'Active'";
+             WHERE e.eid = ? AND LOWER(TRIM(el.status)) = 'active'";
 $stmt = $con->prepare($emp_query);
 $stmt->bind_param("s", $eid);
 $stmt->execute();
@@ -55,5 +56,7 @@ if ($result->num_rows === 0) {
 }
 
 $user_data = $result->fetch_assoc();
-?>
+if (!isset($_SESSION['user_id']) && !empty($user_data['id'])) {
+    $_SESSION['user_id'] = (int)$user_data['id'];
+}
 

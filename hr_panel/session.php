@@ -1,7 +1,6 @@
 <?php
-// Include centralized session manager
-require_once __DIR__ . '/../includes/session_manager.php';
-
+require_once __DIR__ . '/../includes/hrms_session.php';
+hrms_start_session('employee');
 include('connection.php');
 
 // Check if user is logged in

@@ -13,11 +13,11 @@ if(isset($_GET['del'])) {
     $delete_query = "delete from employees where id=$id";
     if(mysqli_query($con, $delete_query)) {
         echo "<script>alert('Employee deleted successfully!');</script>";
-        echo "<script>window.location.href='http://localhost/emps/admin_panel/view_emp.php';</script>";
+        echo "<script>window.location.href='/emps/admin_panel/view_emp.php';</script>";
         exit();
     } else {
         echo "<script>alert('Error: " . mysqli_error($con) . "');</script>";
-        echo "<script>window.location.href='http://localhost/emps/admin_panel/view_emp.php';</script>";
+        echo "<script>window.location.href='/emps/admin_panel/view_emp.php';</script>";
         exit();
     }
 }
@@ -324,7 +324,7 @@ if ($file_uploaded) {
         
 if (mysqli_query($con, $ins)) {
 echo "<script>alert('Form updated successfully!');</script>";
-echo "<script>window.location.href='http://localhost/emps/admin_panel/view_emp.php';</script>";
+echo "<script>window.location.href='/emps/admin_panel/view_emp.php';</script>";
 } else {
 echo "Error: " . mysqli_error($con);
 }
@@ -375,7 +375,7 @@ echo "Error: " . mysqli_error($con);
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                        href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

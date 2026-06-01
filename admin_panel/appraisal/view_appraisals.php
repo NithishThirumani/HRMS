@@ -1,17 +1,12 @@
 <?php
-session_start();
-require_once(__DIR__ . '/../../connection.php');
-require_once(__DIR__ . '/../../classes/EmployeeAppraisal.php');
-require_once(__DIR__ . '/../../classes/AppraisalPeriod.php');
+require_once __DIR__ . '/bootstrap_session.php';
+require_once __DIR__ . '/../../connection.php';
+require_once __DIR__ . '/../../classes/AppraisalPeriod.php';
+require_once dirname(__DIR__, 2) . '/includes/appraisal_helpers.php';
 
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'hr'])) {
-    header('Location: ../../login.php');
-    exit();
-}
-
-$appraisal = new EmployeeAppraisal();
 $period = new AppraisalPeriod();
 $periods = $period->getAllPeriods();
+$departments = hrms_get_departments_list($con);
 ?>
 
 <!DOCTYPE html>
@@ -129,17 +124,12 @@ $periods = $period->getAllPeriods();
                             </div>
                             <div class="col-md-4">
                                 <select id="departmentFilter" class="form-control">
-                                    <option value="">Select Department</option>
-                                    <?php
-                                    global $con;
-                                    $query = "SELECT DISTINCT department FROM employees WHERE department IS NOT NULL ORDER BY department";
-                                    $result = $con->query($query);
-                                    while ($row = $result->fetch_assoc()):
-                                        ?>
-                                        <option value="<?php echo $row['department']; ?>">
-                                            <?php echo $row['department']; ?>
+                                    <option value="">All Departments</option>
+                                    <?php foreach ($departments as $dept): ?>
+                                        <option value="<?php echo (int) $dept['id']; ?>">
+                                            <?php echo htmlspecialchars($dept['name']); ?>
                                         </option>
-                                    <?php endwhile; ?>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -196,7 +186,7 @@ $periods = $period->getAllPeriods();
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                    <a class="btn btn-success" href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

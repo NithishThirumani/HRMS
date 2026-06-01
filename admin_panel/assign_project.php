@@ -3,34 +3,107 @@
 include('connection.php'); // Include your database connection file
 
 if(isset($_POST['submit'])) {
-    // Retrieve data from the form
-    $leader_id = $_POST['nid'];
-    $project_name = $_POST['nm'];
-    $description = $_POST['des'];
-    $due_date = $_POST['dt'];
+    // #region agent log
+    $debugLog = function ($message, $data, $hypothesisId) {
+        $entry = json_encode([
+            'sessionId' => 'a77d8c',
+            'runId' => 'assign-project',
+            'hypothesisId' => $hypothesisId,
+            'location' => 'assign_project.php:POST',
+            'message' => $message,
+            'data' => $data,
+            'timestamp' => round(microtime(true) * 1000),
+        ]);
+        @file_put_contents(__DIR__ . '/../debug-a77d8c.log', $entry . PHP_EOL, FILE_APPEND);
+    };
+    // #endregion
 
-    // Fetch leader_name and leader_email from employees table based on leader_id
-    $query = "SELECT * FROM employees WHERE id = $leader_id";
-    $result = mysqli_query($con, $query);
+    // Retrieve and validate data from the form
+    $leader_id = isset($_POST['nid']) ? intval($_POST['nid']) : 0;
+    $project_name = isset($_POST['nm']) ? trim($_POST['nm']) : '';
+    $description = isset($_POST['des']) ? trim($_POST['des']) : '';
+    $due_date = isset($_POST['dt']) ? trim($_POST['dt']) : '';
 
-    if(mysqli_num_rows($result) > 0) {
-        // Fetch the row
-        $row = mysqli_fetch_assoc($result);
-        $leader_name = $row['full_name'];
-        $leader_email = $row['email'];
+    // #region agent log
+    $debugLog('Form submitted', [
+        'leader_id' => $leader_id,
+        'project_name_len' => strlen($project_name),
+        'due_date' => $due_date,
+    ], 'D');
+    // #endregion
 
-        // Insert data into projects table
-        $insert_query = "INSERT INTO projects (p_name, leader_id, leader_name, leader_email, p_description, due_date, sub_date, points, status)
-                        VALUES ('$project_name', '$leader_id', '$leader_name', '$leader_email', '$description', '$due_date', '', 0, 'pending')";
-
-        if(mysqli_query($con, $insert_query)) {
-            echo "<script>alert('Project assigned successfully!');</script>";
-            echo "<script>window.location.href='http://localhost/emps/admin_panel/project_status.php';</script>";
-        } else {
-            echo "<script>alert('Error: ".mysqli_error($con)."');</script>";
-        }
+    if ($leader_id <= 0 || $project_name === '') {
+        echo "<script>alert('Please provide a valid employee and project name.');</script>";
     } else {
-        echo "<script>alert('Leader with ID $leader_id does not exist');</script>";
+        // Fetch leader_name and leader_email using prepared statement
+        $stmt = $con->prepare("SELECT full_name, email FROM employees WHERE id = ?");
+        $stmt->bind_param('i', $leader_id);
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        if($res && $res->num_rows > 0) {
+            $row = $res->fetch_assoc();
+            $leader_name = $row['full_name'];
+            $leader_email = $row['email'];
+
+            // Insert data into projects table using prepared statement
+            $sub_date = ($due_date !== '') ? $due_date : date('Y-m-d');
+            $file_name = '';
+            $points = 0;
+            $status = 'pending';
+            $insert_sql = "INSERT INTO projects (p_name, leader_id, leader_name, leader_email, p_description, due_date, sub_date, file_name, points, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $insert_stmt = $con->prepare($insert_sql);
+
+            // #region agent log
+            $debugLog('Prepared INSERT', [
+                'columns' => ['p_name','leader_id','leader_name','leader_email','p_description','due_date','sub_date','file_name','points','status'],
+                'placeholder_count' => 10,
+                'file_name' => $file_name,
+                'sub_date' => $sub_date,
+            ], 'A');
+            // #endregion
+
+            if ($insert_stmt) {
+                $insert_stmt->bind_param('sissssssis', $project_name, $leader_id, $leader_name, $leader_email, $description, $due_date, $sub_date, $file_name, $points, $status);
+                try {
+                    $executed = $insert_stmt->execute();
+                    // #region agent log
+                    $debugLog('INSERT execute result', [
+                        'success' => $executed,
+                        'insert_id' => $insert_stmt->insert_id,
+                        'error' => $insert_stmt->error,
+                    ], 'A');
+                    // #endregion
+                    if($executed) {
+                        echo "<script>alert('Project assigned successfully!');</script>";
+                        echo "<script>window.location.href='/emps/admin_panel/project_status.php';</script>";
+                    } else {
+                        error_log('Insert project failed: ' . $insert_stmt->error);
+                        echo "<script>alert('Error assigning project.');</script>";
+                    }
+                } catch (mysqli_sql_exception $ex) {
+                    // #region agent log
+                    $debugLog('INSERT exception', [
+                        'message' => $ex->getMessage(),
+                        'code' => $ex->getCode(),
+                    ], 'A');
+                    // #endregion
+                    error_log('Insert project exception: ' . $ex->getMessage());
+                    echo "<script>alert('Error assigning project: " . addslashes($ex->getMessage()) . "');</script>";
+                }
+            } else {
+                // #region agent log
+                $debugLog('Prepare failed', ['error' => $con->error], 'C');
+                // #endregion
+                error_log('Prepare insert failed: ' . $con->error);
+                echo "<script>alert('Error preparing project assignment.');</script>";
+            }
+        } else {
+            // #region agent log
+            $debugLog('Leader not found', ['leader_id' => $leader_id], 'D');
+            // #endregion
+            echo "<script>alert('Leader with ID $leader_id does not exist');</script>";
+        }
     }
 }
 ?>
@@ -203,7 +276,7 @@ if(isset($_POST['submit'])) {
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/emps/admin_panel/logout.php">Logout</a>
+                        href="/emps/admin_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

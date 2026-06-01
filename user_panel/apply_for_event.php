@@ -31,7 +31,7 @@ if(isset($_POST['btn'])) {
     $check_result = mysqli_query($con, $check_query);
     if (mysqli_num_rows($check_result) > 0) {
         echo "<script>alert('Record already exists for this employee!');</script>";
-        echo "<script>window.location.href='http://localhost/emps/user_panel/event.php';</script>";
+        echo "<script>window.location.href='/emps/user_panel/event.php';</script>";
     } else {
         // Insert new record
         $insert_query = "INSERT INTO event_pt (event_id, employee_name, mobile_number, event_date, event_starting_time, event_ending_time, venue_address, title_of_participation, additional_information, admin_remark) 
@@ -63,11 +63,11 @@ if(isset($_GET['apply'])) {
         $res1 = mysqli_query($con, $q);
 }
         echo "<script>alert('Applid successfully!');</script>";
-        echo "<script>window.location.href='http://localhost/emps/user_panel/event.php';</script>";
+        echo "<script>window.location.href='/emps/user_panel/event.php';</script>";
     } 
 }else {
         echo "<script>alert('Error: " . mysqli_error($con) . "');</script>";
-        echo "<script>window.location.href='http://localhost/emps/user_panel/event.php';</script>";
+        echo "<script>window.location.href='/emps/user_panel/event.php';</script>";
     }
 }
 
@@ -262,7 +262,7 @@ if(isset($_GET['apply'])) {
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-success"
-                        href="http://localhost/emps/user_panel/logout.php">Logout</a>
+                        href="/emps/user_panel/logout.php">Logout</a>
                 </div>
             </div>
         </div>

@@ -4,7 +4,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 ob_start(); // Add output buffering
-session_start();
+require_once __DIR__ . '/includes/hrms_session.php';
+hrms_start_session('login');
 include('connection.php');
 
 // Move header.php inclusion after all potential redirects
@@ -12,23 +13,38 @@ $login_error = '';
 $redirect = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['email']) && isset($_POST['ps'])) {
-        $email = $_POST['email'];
-        $password = $_POST['ps'];
+    if (!empty($_POST['email']) && !empty($_POST['ps'])) {
+        $email = trim($_POST['email']);
+        $password = trim($_POST['ps']);
 
         // First check admin table
-        $admin_sql = "SELECT * FROM admin WHERE email = ?";  // Removed status check to allow all admin logins
+        $admin_sql = "SELECT * FROM admin WHERE email = ?";
         $admin_stmt = $con->prepare($admin_sql);
-        $admin_stmt->bind_param("s", $email);
-        $admin_stmt->execute();
-        $admin_result = $admin_stmt->get_result();
+        if ($admin_stmt) {
+            $admin_stmt->bind_param("s", $email);
+            $admin_stmt->execute();
+            $admin_result = $admin_stmt->get_result();
+        } else {
+            error_log('Prepare failed for admin_sql: ' . $con->error);
+            $admin_result = null;
+        }
 
-        if ($admin_result->num_rows > 0) {
+        if ($admin_result && $admin_result->num_rows > 0) {
             // Admin user found
             $row = $admin_result->fetch_assoc();
-            if ($password == 12345) {
-                // if (password_verify($password, $row['password']) || $password === $row['password']) { // Temporary fix for plain text passwords
-                // Always set admin status to Active on login
+
+            // Support plaintext or hashed passwords (bcrypt)
+            $admin_password_matches = false;
+            if ($password === $row['password']) {
+                $admin_password_matches = true;
+                error_log('Admin password matched plaintext for: ' . $email);
+            } elseif (!empty($row['password']) && password_verify($password, $row['password'])) {
+                $admin_password_matches = true;
+                error_log('Admin password matched hashed for: ' . $email);
+            }
+
+            if ($admin_password_matches) {
+                hrms_start_session($row['admin_type'] === 'super_admin' ? 'super_admin' : 'admin');
                 $update_sql = "UPDATE admin SET last_login = NOW(), last_login_ip = ?, status = 'Active' WHERE id = ?";
                 $update_stmt = $con->prepare($update_sql);
                 $ip = $_SERVER['REMOTE_ADDR'];
@@ -37,16 +53,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 // Set session variables for admin
                 $_SESSION['admin_id'] = $row['id'];
+                $_SESSION['user_id'] = $row['id'];
                 $_SESSION['email'] = $row['email'];
-                $_SESSION['role'] = $row['role'];
+                $_SESSION['role'] = ($row['role'] === 'super_admin') ? 'super_admin' : 'admin';
                 $_SESSION['admin_type'] = $row['admin_type'];
+                $_SESSION['username'] = !empty($row['user_name']) ? $row['user_name'] : $row['email'];  // Required for change_password.php
                 $_SESSION['last_activity'] = time();
 
                 // Route based on admin type
                 if ($row['admin_type'] === 'super_admin') {
                     $redirect = "super_admin_panel/index.php";
                 } else {
-                     
                     $redirect = "admin_panel/index.php";
                 }
 
@@ -63,46 +80,66 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                        FROM employees e 
                        JOIN emp_login el ON e.eid = el.emp_id 
                        LEFT JOIN departments d ON e.department_id = d.id 
-                       WHERE el.email = ? AND el.status = 'Active'";
+                       WHERE el.email = ? AND LOWER(el.status) = 'active'";
 
             $emp_stmt = $con->prepare($emp_sql);
-            $emp_stmt->bind_param("s", $email);
-            $emp_stmt->execute();
-            $emp_result = $emp_stmt->get_result();
+            if ($emp_stmt) {
+                $emp_stmt->bind_param("s", $email);
+                $emp_stmt->execute();
+                $emp_result = $emp_stmt->get_result();
+            } else {
+                error_log('Prepare failed for emp_sql: ' . $con->error);
+                $emp_result = null;
+            }
 
-            if ($emp_result->num_rows > 0) {
+            if ($emp_result && $emp_result->num_rows > 0) {
                 $row = $emp_result->fetch_assoc();
 
                 // Check if employee is a trainee
                 if ($row['is_trainee'] == 1) {
                     $login_error = '❌ Trainee accounts do not have system access';
                     error_log("Login attempt by trainee account: " . $email);
-                } else if (password_verify($password, $row['password']) || $password === $row['password']) { // Temporary fix for plain text passwords
-                    // Set employee session variables
-                    $_SESSION['eid'] = $row['eid'];
-                    $_SESSION['email'] = $row['email'];
-                    $_SESSION['role'] = strtoupper($row['emp_role']);
-                    $_SESSION['department_id'] = $row['department_id'];  // Add department_id for HOD panel
-                    $_SESSION['department_name'] = $row['department_name'];
-                    $_SESSION['last_activity'] = time();
-                    $_SESSION['user_name'] = $row['user_name'];
-                    $_SESSION['username'] = $row['user_name'];  // Add username for session.php compatibility
-                    $_SESSION['is_trainee'] = $row['is_trainee'];  // Add trainee status to session
-
-                    $user_role = strtolower($row['emp_role']);
-                    if (in_array($user_role, ['hr', 'HR'])) {
-                        $_SESSION['eid'] = $row['eid']; // Ensure eid is set for HR
-                        $redirect = "hr_panel/index.php";
-                    } elseif (in_array($user_role, ['hod', 'HOD'])) {
-                        $redirect = "hod_panel/index.php";
-                    } else {
-                        $redirect = "user_panel/index.php";
+                } else {
+                    // Support plaintext or hashed passwords (bcrypt)
+                    $emp_password_matches = false;
+                    if ($password === $row['password']) {
+                        $emp_password_matches = true;
+                        error_log('Employee password matched plaintext for: ' . $email);
+                    } elseif (!empty($row['password']) && password_verify($password, $row['password'])) {
+                        $emp_password_matches = true;
+                        error_log('Employee password matched hashed for: ' . $email);
                     }
 
-                    error_log("Employee login successful: " . $row['email'] . " (Role: " . $user_role . ")");
-                } else {
-                    $login_error = '❌ Invalid Password';
-                    error_log("Password verification failed for employee: " . $email);
+                    if ($emp_password_matches) {
+                        hrms_start_session('employee');
+
+                        // Set employee session variables
+                        $_SESSION['eid'] = $row['eid'];
+                        $_SESSION['user_id'] = (int)$row['id'];
+                        $_SESSION['email'] = $row['email'];
+                        $_SESSION['role'] = strtoupper($row['emp_role']);
+                        $_SESSION['department_id'] = $row['department_id'];  // Add department_id for HOD panel
+                        $_SESSION['department_name'] = $row['department_name'];
+                        $_SESSION['last_activity'] = time();
+                        $_SESSION['user_name'] = $row['user_name'];
+                        $_SESSION['username'] = $row['user_name'];  // Add username for session.php compatibility
+                        $_SESSION['is_trainee'] = $row['is_trainee'];  // Add trainee status to session
+
+                        $user_role = strtolower($row['emp_role']);
+                        if (in_array($user_role, ['hr', 'HR'])) {
+                            $_SESSION['eid'] = $row['eid']; // Ensure eid is set for HR
+                            $redirect = "hr_panel/index.php";
+                        } elseif (in_array($user_role, ['hod', 'HOD'])) {
+                            $redirect = "hod_panel/index.php";
+                        } else {
+                            $redirect = "user_panel/index.php";
+                        }
+
+                        error_log("Employee login successful: " . $row['email'] . " (Role: " . $user_role . ")");
+                    } else {
+                        $login_error = '❌ Invalid Password';
+                        error_log("Password verification failed for employee: " . $email . " | entered:[" . $password . "] stored:[" . $row['password'] . "]");
+                    }
                 }
             } else {
                 $login_error = '❌ Invalid Email';
@@ -117,7 +154,7 @@ if ($redirect) {
     // Ensure proper redirect URL
     $redirect = trim($redirect, '/');
     if (!empty($redirect)) {
-        header("Location: " . $redirect);
+       header("Location: /emps/" . $redirect);
         exit();
     }
 }

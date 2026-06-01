@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/includes/hrms_session.php';
+hrms_start_session('admin');
 require_once('../connection.php');
 
 // Check if user is logged in and has admin privileges
@@ -10,6 +11,11 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || ($_SESSION['role'
     // Redirect to login page
     header("Location: ../login.php");
     exit();
+}
+
+// Sync user_id for modules that expect it (appraisal, feedback, etc.)
+if (!isset($_SESSION['user_id']) && isset($_SESSION['admin_id'])) {
+    $_SESSION['user_id'] = $_SESSION['admin_id'];
 }
 
 // Get admin details

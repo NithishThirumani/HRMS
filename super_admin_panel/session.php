@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/includes/hrms_session.php';
+hrms_start_session('super_admin');
 include('../connection.php');
 
 // Check if user is logged in and has super admin privileges
