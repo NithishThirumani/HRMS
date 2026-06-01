@@ -10,20 +10,20 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
     header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
 }
 
+require_once __DIR__ . '/includes/hrms_paths.php';
+require_once __DIR__ . '/includes/db_connection.php';
+
 // Base URL Configuration (empty on Render, /emps on local XAMPP)
 $base_url = hrms_base_path();
-$admin_url = $base_url . "/admin_panel";
-$user_url = $base_url . "/user_panel";
-$hod_url = $base_url . "/hod_panel";
+$admin_url = $base_url . '/admin_panel';
+$user_url = $base_url . '/user_panel';
+$hod_url = $base_url . '/hod_panel';
 
 // Error handling
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/logs/php_errors.log');
-
-require_once __DIR__ . '/includes/db_connection.php';
-require_once __DIR__ . '/includes/hrms_paths.php';
 
 // URL helper functions
 if (!function_exists('getUrl')) {
