@@ -1,8 +1,3 @@
+vendor
+node_modules
 .git
-.gitignore
-*.md
-folder_tree.txt
-error_log
-terminals
-agent-transcripts
-.dockerignore
