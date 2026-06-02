@@ -1,10 +1,9 @@
 <?php
-// Prevent any output before JSON response
-ob_clean();
-header('Content-Type: application/json');
-
+ob_start();
 include('session.php');
 include('connection.php');
+
+header('Content-Type: application/json');
 
 // Enable error reporting but log to file instead of output
 error_reporting(E_ALL);
@@ -61,7 +60,7 @@ try {
     $values[] = $id;
 
     // Handle file uploads
-    $upload_dir = 'uploads/';
+    $upload_root = __DIR__ . '/uploads/';
     $document_fields = ['profile_pic', 'visa_doc', 'passport_doc'];
     $debug['file_uploads'] = [];
 
@@ -69,13 +68,20 @@ try {
         if (isset($_FILES[$doc_field]) && $_FILES[$doc_field]['error'] === UPLOAD_ERR_OK) {
             $tmp_name = $_FILES[$doc_field]['tmp_name'];
             $name = basename($_FILES[$doc_field]['name']);
-            $upload_path = $upload_dir . $doc_field . 's/' . time() . '_' . $name;
+            $subdir = $doc_field === 'profile_pic' ? 'profile_pics' : 'documents';
+            $upload_dir = $upload_root . $subdir . '/';
+            if (!is_dir($upload_dir) && !mkdir($upload_dir, 0755, true) && !is_dir($upload_dir)) {
+                throw new Exception('Unable to create upload directory for ' . $doc_field);
+            }
+            $filename = time() . '_' . $name;
+            $upload_path = $upload_dir . $filename;
+            $db_path = 'uploads/' . $subdir . '/' . $filename;
             
             if (move_uploaded_file($tmp_name, $upload_path)) {
                 $updates[] = "`$doc_field` = ?";
                 $types .= 's';
-                $values[] = $upload_path;
-                $debug['file_uploads'][$doc_field] = $upload_path;
+                $values[] = $db_path;
+                $debug['file_uploads'][$doc_field] = $db_path;
             }
         }
     }

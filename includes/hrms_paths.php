@@ -107,15 +107,27 @@ if (!function_exists('hrms_employee_upload_url')) {
 
         if (preg_match('#^(admin_panel|hr_panel|hod_panel)/#', $storedPath)) {
             $relative = $storedPath;
+            $diskPath = dirname(__DIR__) . '/' . $relative;
+            if (is_file($diskPath)) {
+                return hrms_url($relative);
+            }
         } elseif (str_starts_with($storedPath, 'uploads/')) {
-            $relative = $panel . '/' . $storedPath;
+            foreach ([$panel, 'admin_panel', 'hr_panel', 'hod_panel'] as $p) {
+                $relative = $p . '/' . $storedPath;
+                $diskPath = dirname(__DIR__) . '/' . $relative;
+                if (is_file($diskPath)) {
+                    return hrms_url($relative);
+                }
+            }
         } else {
-            $relative = $panel . '/uploads/profile_pics/' . basename($storedPath);
-        }
-
-        $diskPath = dirname(__DIR__) . '/' . $relative;
-        if (is_file($diskPath)) {
-            return hrms_url($relative);
+            $fileName = basename($storedPath);
+            foreach ([$panel, 'admin_panel', 'hr_panel', 'hod_panel'] as $p) {
+                $relative = $p . '/uploads/profile_pics/' . $fileName;
+                $diskPath = dirname(__DIR__) . '/' . $relative;
+                if (is_file($diskPath)) {
+                    return hrms_url($relative);
+                }
+            }
         }
 
         return $default;

@@ -1,6 +1,7 @@
 <?php
 include('session.php');
 include('connection.php');
+require_once dirname(__DIR__) . '/includes/hrms_paths.php';
 
 if (!isset($_GET['id'])) {
     die("Employee ID not provided.");
@@ -19,17 +20,7 @@ if (!$employee) {
 }
 
 $pic = $employee['profile_pic'] ?? '';
-if ($pic) {
-    if (strpos($pic, 'http') === 0 || strpos($pic, '/admin_panel/') === 0) {
-        // use as-is
-    } else {
-        $pic = ltrim($pic, '/');
-        $pic = preg_replace('#^(uploads/profile_pics/)?#', '', $pic);
-        $pic = '/admin_panel/uploads/profile_pics/' . $pic;
-    }
-} else {
-    $pic = '/img/undraw_profile.svg';
-}
+$pic = hrms_employee_upload_url($pic, 'hr_panel');
 ?>
 
 <!DOCTYPE html>
