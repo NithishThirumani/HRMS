@@ -298,11 +298,22 @@ if (!function_exists('hrms_save_employee_upload')) {
             $fail('Could not create upload folder. Contact administrator.');
         }
 
-        $newFileName = preg_replace('/[^a-z0-9_-]/i', '_', $prefix) . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+        $safePrefix = preg_replace('/[^a-z0-9_-]/i', '_', $prefix);
+        if ($subdir === 'profile_pics') {
+            // employees.profile_pic is varchar(50); keep filename short.
+            $safePrefix = substr($safePrefix, 0, 12);
+            $newFileName = $safePrefix . '_' . time() . '.' . $ext;
+        } else {
+            $newFileName = $safePrefix . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+        }
         $targetPath = $absDir . '/' . $newFileName;
 
         if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
             $fail('Could not save uploaded file. Check server write permissions.');
+        }
+
+        if ($subdir === 'profile_pics') {
+            return $newFileName;
         }
 
         return 'uploads/' . $subdir . '/' . $newFileName;

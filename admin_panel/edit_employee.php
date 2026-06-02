@@ -874,10 +874,17 @@ if (!$employee) {
                                         Swal.fire('Error!', e.message, 'error');
                                     }
                                 },
-                                error: () => {
+                                error: (xhr) => {
                                     Swal.close();
                                     $('#profilePic').attr('src', originalSrc);
-                                    Swal.fire('Error!', 'Failed to connect to server', 'error');
+                                    let msg = 'Failed to connect to server';
+                                    if (xhr && xhr.responseText) {
+                                        try {
+                                            const data = JSON.parse(xhr.responseText);
+                                            if (data.message) msg = data.message;
+                                        } catch (e) {}
+                                    }
+                                    Swal.fire('Error!', msg, 'error');
                                 }
                             });
                         };

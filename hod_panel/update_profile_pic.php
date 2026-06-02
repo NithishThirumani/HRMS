@@ -43,7 +43,11 @@ try {
     mysqli_stmt_close($stmt);
 
     if (!empty($oldPath)) {
-        $oldFile = dirname(__DIR__) . '/' . $panel . '/' . ltrim(str_replace('\\', '/', $oldPath), '/');
+        $normalizedOldPath = ltrim(str_replace('\\', '/', $oldPath), '/');
+        if (strpos($normalizedOldPath, '/') === false) {
+            $normalizedOldPath = 'uploads/profile_pics/' . $normalizedOldPath;
+        }
+        $oldFile = dirname(__DIR__) . '/' . $panel . '/' . $normalizedOldPath;
         if (is_file($oldFile)) {
             @unlink($oldFile);
         }

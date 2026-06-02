@@ -982,17 +982,35 @@ if (!$employee) {
                             processData: false,
                             contentType: false,
                             success: function (response) {
-                                const data = JSON.parse(response);
-                                if (data.status === 'success') {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Profile Picture Updated',
-                                        toast: true,
-                                        position: 'top-end',
-                                        showConfirmButton: false,
-                                        timer: 3000
-                                    });
+                                try {
+                                    const data = typeof response === 'string' ? JSON.parse(response) : response;
+                                    if (data.status === 'success') {
+                                        const newSrc = (data.url || ('uploads/profile_pics/' + (data.new_path || ''))) + '?t=' + new Date().getTime();
+                                        $('#profilePic').attr('src', newSrc);
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Profile Picture Updated',
+                                            toast: true,
+                                            position: 'top-end',
+                                            showConfirmButton: false,
+                                            timer: 3000
+                                        });
+                                    } else {
+                                        throw new Error(data.message || 'Failed to upload profile picture');
+                                    }
+                                } catch (e) {
+                                    Swal.fire({ icon: 'error', title: 'Error!', text: e.message });
                                 }
+                            },
+                            error: function (xhr) {
+                                let msg = 'Failed to connect to server';
+                                if (xhr && xhr.responseText) {
+                                    try {
+                                        const data = JSON.parse(xhr.responseText);
+                                        if (data.message) msg = data.message;
+                                    } catch (e) {}
+                                }
+                                Swal.fire({ icon: 'error', title: 'Error!', text: msg });
                             }
                         });
                     };
