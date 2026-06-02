@@ -228,6 +228,87 @@ if (!function_exists('hrms_send_registration_welcome_email')) {
     }
 }
 
+if (!function_exists('hrms_upload_was_attempted')) {
+    function hrms_upload_was_attempted(array $file): bool
+    {
+        return isset($file['error']) && (int) $file['error'] !== UPLOAD_ERR_NO_FILE;
+    }
+}
+
+if (!function_exists('hrms_save_employee_upload')) {
+    /**
+     * Save an employee upload under {panel}/uploads/{subdir}/.
+     *
+     * @return string DB path e.g. uploads/profile_pics/profile_123.jpg, or '' if optional and no file
+     */
+    function hrms_save_employee_upload(
+        array $file,
+        string $panel,
+        string $subdir,
+        string $prefix,
+        array $allowedExtensions,
+        bool $optional = true,
+        int $maxBytes = 5242880,
+        bool $throwOnError = false
+    ): string {
+        $fail = static function (string $message) use ($throwOnError): void {
+            if ($throwOnError) {
+                throw new RuntimeException($message);
+            }
+            hrms_registration_fail($message);
+        };
+
+        if (!hrms_upload_was_attempted($file)) {
+            if (!$optional) {
+                $fail('A file is required.');
+            }
+            return '';
+        }
+
+        $error = (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
+        if ($error === UPLOAD_ERR_INI_SIZE || $error === UPLOAD_ERR_FORM_SIZE) {
+            $fail('File is too large. Maximum size is 5 MB.');
+        }
+        if ($error !== UPLOAD_ERR_OK) {
+            $fail('File upload failed. Please try again.');
+        }
+
+        $originalName = (string) ($file['name'] ?? '');
+        $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+        $allowedExtensions = array_map('strtolower', $allowedExtensions);
+
+        if (!in_array($ext, $allowedExtensions, true)) {
+            $fail('Invalid file type. Allowed: ' . implode(', ', $allowedExtensions) . '.');
+        }
+
+        if ($subdir === 'profile_pics') {
+            $imageInfo = @getimagesize($file['tmp_name']);
+            if ($imageInfo === false) {
+                $fail('Profile picture must be a valid image (JPG or PNG).');
+            }
+        }
+
+        $size = (int) ($file['size'] ?? 0);
+        if ($size > $maxBytes) {
+            $fail('File is too large. Maximum size is 5 MB.');
+        }
+
+        $absDir = dirname(__DIR__) . '/' . $panel . '/uploads/' . $subdir;
+        if (!is_dir($absDir) && !mkdir($absDir, 0755, true) && !is_dir($absDir)) {
+            $fail('Could not create upload folder. Contact administrator.');
+        }
+
+        $newFileName = preg_replace('/[^a-z0-9_-]/i', '_', $prefix) . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+        $targetPath = $absDir . '/' . $newFileName;
+
+        if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+            $fail('Could not save uploaded file. Check server write permissions.');
+        }
+
+        return 'uploads/' . $subdir . '/' . $newFileName;
+    }
+}
+
 if (!function_exists('hrms_registration_duplicate_message')) {
     function hrms_registration_duplicate_message(mysqli $con, int $errno, string $error): string
     {

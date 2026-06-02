@@ -863,7 +863,7 @@ if (!$employee) {
                                     try {
                                         const data = typeof response === 'string' ? JSON.parse(response) : response;
                                         if (data.status === 'success') {
-                                            const newSrc = `uploads/profile_pics/${data.new_path}?t=${new Date().getTime()}`;
+                                            const newSrc = (data.url || `uploads/profile_pics/${data.new_path}`) + '?t=' + new Date().getTime();
                                             $('#profilePic').attr('src', newSrc).data('original-src', newSrc);
                                             Swal.fire('Updated!', 'Profile picture saved successfully', 'success');
                                         } else {

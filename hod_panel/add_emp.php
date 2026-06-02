@@ -1,7 +1,10 @@
 <?php
 include('session.php');
 include('connection.php');
+require_once dirname(__DIR__) . '/includes/hrms_paths.php';
 require_once dirname(__DIR__) . '/includes/employee_registration_helpers.php';
+
+$hrms_panel = basename(__DIR__);
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 
@@ -15,11 +18,7 @@ require('PHPMailer/Exception.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) { // Changed to 'register'
 
-    $uploadDirs = [
-        'profile_pic' => "uploads/profile_pics",
-        'visa_doc' => "uploads/documents",
-        'passport_doc' => "uploads/documents"
-    ];
+    $panel = $hrms_panel;
     // Retrieve form data
     // Basic Information
     $first_name = mysqli_real_escape_string($con, $_POST['fn']);
@@ -112,29 +111,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) { // Chan
 
     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-    // Function to handle file upload securely
-    function uploadFile($file, $uploadDir, $prefix)
-    {
-        $fileName = basename($file["name"]);
-        $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
-        $newFileName = $prefix . "_" . time() . "." . $fileExt; // Unique file name
-        $targetFilePath = $uploadDir . "/" . $newFileName;
-
-        // Allowed file types
-        $allowedTypes = array("jpg", "jpeg", "png", "pdf");
-
-        if (in_array(strtolower($fileExt), $allowedTypes)) {
-            if (move_uploaded_file($file["tmp_name"], $targetFilePath)) {
-                return $uploadDir . "/" . $newFileName;
-            }
-        }
-        return false;
-    }
-
-    // Handle file uploads
-    $profilePic = uploadFile($_FILES["profile_pic"], $uploadDirs['profile_pic'], "profile");
-    $visaDoc = uploadFile($_FILES["visa_doc"], $uploadDirs['visa_doc'], "visa");
-    $passportDoc = uploadFile($_FILES["passport_doc"], $uploadDirs['passport_doc'], "passport");
+    $profilePic = hrms_save_employee_upload(
+        $_FILES['profile_pic'] ?? [],
+        $panel,
+        'profile_pics',
+        'profile',
+        ['jpg', 'jpeg', 'png'],
+        true
+    );
+    $visaDoc = hrms_save_employee_upload(
+        $_FILES['visa_doc'] ?? [],
+        $panel,
+        'documents',
+        'visa',
+        ['jpg', 'jpeg', 'png', 'pdf'],
+        true
+    );
+    $passportDoc = hrms_save_employee_upload(
+        $_FILES['passport_doc'] ?? [],
+        $panel,
+        'documents',
+        'passport',
+        ['jpg', 'jpeg', 'png', 'pdf'],
+        true
+    );
 
 
     $new_eid = hrms_generate_next_eid($con);
