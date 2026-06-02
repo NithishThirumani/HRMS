@@ -54,6 +54,7 @@ if (-not $SkipExport) {
     }
 
     Write-Host "Exporting local database [$LocalDatabase] from $LocalHost ..."
+    # XAMPP / MariaDB 10.x mysqldump does not support --set-gtid-purged
     $dumpArgs = @(
         "-h", $LocalHost,
         "-u", $LocalUser,
@@ -61,7 +62,6 @@ if (-not $SkipExport) {
         "--single-transaction",
         "--routines",
         "--triggers",
-        "--set-gtid-purged=OFF",
         $LocalDatabase
     )
     & $mysqldump @dumpArgs | Set-Content -Path $exportFile -Encoding utf8
