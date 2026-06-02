@@ -13,11 +13,13 @@ if(isset($_GET['del'])) {
     $delete_query = "delete from employees where id=$id";
     if(mysqli_query($con, $delete_query)) {
         echo "<script>alert('Employee deleted successfully!');</script>";
-        echo "<script>window.location.href='/emps/admin_panel/view_emp.php';</script>";
+        require_once dirname(__DIR__) . '/includes/hrms_paths.php';
+        echo "<script>window.location.href=" . json_encode(hrms_admin_panel_url('view_emp1.php')) . ";</script>";
         exit();
     } else {
         echo "<script>alert('Error: " . mysqli_error($con) . "');</script>";
-        echo "<script>window.location.href='/emps/admin_panel/view_emp.php';</script>";
+        require_once dirname(__DIR__) . '/includes/hrms_paths.php';
+        echo "<script>window.location.href=" . json_encode(hrms_admin_panel_url('view_emp1.php')) . ";</script>";
         exit();
     }
 }
@@ -324,7 +326,8 @@ if ($file_uploaded) {
         
 if (mysqli_query($con, $ins)) {
 echo "<script>alert('Form updated successfully!');</script>";
-echo "<script>window.location.href='/emps/admin_panel/view_emp.php';</script>";
+require_once dirname(__DIR__) . '/includes/hrms_paths.php';
+echo "<script>window.location.href=" . json_encode(hrms_admin_panel_url('view_emp1.php')) . ";</script>";
 } else {
 echo "Error: " . mysqli_error($con);
 }

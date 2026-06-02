@@ -1,5 +1,7 @@
 <?php
+include('session.php');
 include('connection.php');
+require_once dirname(__DIR__) . '/includes/hrms_paths.php';
 
 if (isset($_POST['id'])) {
     $id = mysqli_real_escape_string($con, $_POST['id']);
@@ -28,7 +30,7 @@ if (isset($_POST['id'])) {
         <div class="row">
             <div class="col-md-4 text-center mb-4">
 
-                <img src="<?php echo !empty($employee['profile_pic']) ? 'uploads/profile_pics/' . basename($employee['profile_pic']) : 'uploads/profile_pics/default.jpg'; ?>"
+                <img src="<?php echo htmlspecialchars(hrms_employee_upload_url($employee['profile_pic'] ?? null)); ?>"
                     class="img-fluid rounded-circle mb-3" style="width: 120px; height: 120px;" alt="Profile Picture">
 
 
@@ -90,15 +92,18 @@ if (isset($_POST['id'])) {
                                 <p><strong>MOL ID:</strong> <?php echo htmlspecialchars($employee['MOLID']); ?></p>
                                 <div class="mt-3">
                                     <h6>Documents:</h6>
-                                    <?php if ($employee['visa_doc']): ?>
-
-                                        <a href="<?php echo 'uploads/documents/' . basename($employee['visa_doc']); ?>"
+                                    <?php
+                                    $visaUrl = hrms_employee_file_url($employee['visa_doc'] ?? null);
+                                    if ($visaUrl): ?>
+                                        <a href="<?php echo htmlspecialchars($visaUrl); ?>"
                                             class="btn btn-sm btn-info m-1" target="_blank">
                                             <i class="fas fa-passport mr-1"></i>Visa
                                         </a>
                                     <?php endif; ?>
-                                    <?php if ($employee['passport_doc']): ?>
-                                        <a href="<?php echo 'uploads/documents/' . basename($employee['passport_doc']); ?>"
+                                    <?php
+                                    $passportUrl = hrms_employee_file_url($employee['passport_doc'] ?? null);
+                                    if ($passportUrl): ?>
+                                        <a href="<?php echo htmlspecialchars($passportUrl); ?>"
                                             class="btn btn-sm btn-info m-1" target="_blank">
                                             <i class="fas fa-id-card mr-1"></i>Passport
                                         </a>

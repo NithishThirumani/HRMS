@@ -5,6 +5,7 @@ ini_set('log_errors', 'On');
 ini_set('error_log', __DIR__ . '/php_errors.log');
 include('session.php');
 include('connection.php');
+require_once dirname(__DIR__) . '/includes/employee_registration_helpers.php';
 
 // Fetch departments before form processing
 $dept_query = "SELECT id, name FROM departments WHERE 1 ORDER BY name ASC";
@@ -42,23 +43,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) { // Chan
     $first_name = mysqli_real_escape_string($con, $_POST['fn']);
     $last_name = mysqli_real_escape_string($con, $_POST['ln']);
     $full_name = $first_name . " " . $last_name;
-    $email = trim(mysqli_real_escape_string($con, $_POST['em'] ?? ''));
-    if (empty($email)) {
-        echo "<script>alert('Error: Email is required and cannot be empty at the time of saving.'); window.history.back();</script>";
-        exit();
+    $email = hrms_normalize_email($_POST['em'] ?? '');
+    $visa_number_precheck = trim($_POST['visa_number'] ?? '');
+    $passport_number_precheck = trim($_POST['passport_number'] ?? '');
+    $precheck_error = hrms_registration_precheck($con, $email, $visa_number_precheck, $passport_number_precheck);
+    if ($precheck_error !== null) {
+        hrms_registration_fail($precheck_error);
     }
-    // Check for duplicate email
-    $sql_check_email = "SELECT id FROM employees WHERE email = ? LIMIT 1";
-    $stmt_check_email = $con->prepare($sql_check_email);
-    $stmt_check_email->bind_param('s', $email);
-    $stmt_check_email->execute();
-    $stmt_check_email->store_result();
-    if ($stmt_check_email->num_rows > 0) {
-        echo "<script>alert('Error: This email is already registered.'); window.history.back();</script>";
-        $stmt_check_email->close();
-        exit();
-    }
-    $stmt_check_email->close();
     $password = mysqli_real_escape_string($con, $_POST['ps']);
     $username = explode("@", $email)[0];
 
@@ -185,24 +176,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) { // Chan
     // The duplicate email check is now handled above before the database insert.
 
 
-    // Insert into employees table
-    $sql_eid = "SELECT MAX(CAST(SUBSTRING(eid, 4) AS UNSIGNED)) AS max_eid FROM employees";
-    $result_eid = mysqli_query($con, $sql_eid);
-    $row_eid = mysqli_fetch_assoc($result_eid);
-    $max_eid = $row_eid['max_eid'];
-    $new_eid = 'CME0' . str_pad(($max_eid + 1), 3, "0", STR_PAD_LEFT);
-
-    // Ensure uniqueness by checking if the generated EID already exists
-    while (true) {
-        $check_eid = "SELECT eid FROM employees WHERE eid = '$new_eid'";
-        $result_check = mysqli_query($con, $check_eid);
-        if (mysqli_num_rows($result_check) == 0) {
-            break;
-        }
-        // If EID exists, increment and try again
-        $max_eid++;
-        $new_eid = 'CME' . str_pad($max_eid, 3, "0", STR_PAD_LEFT);
-    }
+    $new_eid = hrms_generate_next_eid($con);
 
 
     $dol = null; // Set default value to null for new employees
@@ -248,56 +222,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) { // Chan
     } else {
         $labour_card_end_date = $_POST['labour_card_end_date'];
     }
-
-    // Before executing the INSERT query, add validation
-    if (empty($_POST['visa_number'])) {
-        echo "<script>alert('Visa number cannot be empty!'); window.history.back();</script>";
-        exit();
-    }
-
-    // Check if visa number already exists
-    if (isset($_POST['register'])) {
-        // Validate visa number
-        $visa_number = trim($_POST['visa_number']);
-
-        if (empty($visa_number)) {
-            echo "<script>alert('Visa number is required!'); window.history.back();</script>";
-            exit();
-        }
-
-        // Check if visa number already exists
-        $check_query = "SELECT id FROM employees WHERE visa_number = ?";
-        $stmt = mysqli_prepare($con, $check_query);
-        mysqli_stmt_bind_param($stmt, "s", $visa_number);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_store_result($stmt);
-
-        if (mysqli_stmt_num_rows($stmt) > 0) {
-            echo "<script>alert('This visa number already exists!'); window.history.back();</script>";
-            exit();
-        }
-        mysqli_stmt_close($stmt);
-
-    }
-
-
-
-    // After visa number validation and before the INSERT query
-    if (!empty($_POST['passport_number'])) {
-        // Check if passport number already exists
-        $check_passport = "SELECT id FROM employees WHERE passport_number = ?";
-        $stmt = mysqli_prepare($con, $check_passport);
-        mysqli_stmt_bind_param($stmt, "s", $_POST['passport_number']);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_store_result($stmt);
-
-        if (mysqli_stmt_num_rows($stmt) > 0) {
-            echo "<script>alert('This passport number already exists!'); window.history.back();</script>";
-            exit();
-        }
-        mysqli_stmt_close($stmt);
-    }
-
 
     // FINAL check before executing the insert
     if (empty($email)) {
@@ -391,52 +315,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) { // Chan
         );
 
 
-        if ($stmt->execute()) {
-            // After successful employee insertion
-            $emp_sql = "INSERT INTO emp_login (emp_id, user_name, email, password, status) 
-        VALUES (?, ?, ?, ?, 'active')";
-            $emp_stmt = $con->prepare($emp_sql);
-            $emp_stmt->bind_param("ssss", $new_eid, $username, $email, $hashed_password); // Use hashed_password instead of password
-            $emp_stmt->execute();
+        mysqli_begin_transaction($con);
+        $saved = false;
+        $db_errno = 0;
+        $db_error = '';
 
-            // Store registration details for receipt
+        if (!$stmt->execute()) {
+            $db_errno = $stmt->errno;
+            $db_error = $stmt->error;
+            mysqli_rollback($con);
+            hrms_registration_fail(hrms_registration_duplicate_message($con, $db_errno, $db_error));
+        }
+
+        $emp_sql = "INSERT INTO emp_login (emp_id, user_name, email, password, status) 
+            VALUES (?, ?, ?, ?, 'active')";
+        $emp_stmt = $con->prepare($emp_sql);
+        if (!$emp_stmt || !$emp_stmt->bind_param('ssss', $new_eid, $username, $email, $hashed_password) || !$emp_stmt->execute()) {
+            $db_errno = $emp_stmt ? $emp_stmt->errno : $con->errno;
+            $db_error = $emp_stmt ? $emp_stmt->error : $con->error;
+            mysqli_rollback($con);
+            hrms_registration_fail(hrms_registration_duplicate_message($con, $db_errno, $db_error));
+        }
+        $emp_stmt->close();
+
+        mysqli_commit($con);
+        $saved = true;
+
+        if ($saved) {
             $_SESSION['registration_details'] = [
                 'employee_id' => $new_eid,
                 'full_name' => $full_name,
                 'username' => $username,
                 'password' => $_POST['ps'],
                 'email' => $email,
-                'registration_date' => date('Y-m-d H:i:s')
+                'registration_date' => date('Y-m-d H:i:s'),
             ];
-            // Email notification
-            $mail = new PHPMailer();
-            try {
-                $mail->isSMTP();
-                $mail->Host = 'smtp.gmail.com';
-                $mail->SMTPAuth = true;
-                $mail->Username = 'youremail@gmail.com';
-                $mail->Password = 'yourpassword';
-                $mail->SMTPSecure = 'ssl';
-                $mail->Port = 465;
-                $mail->setFrom('youremail@gmail.com', 'Your Name');
-                $mail->addAddress($email, $first_name);
-                $mail->isHTML(true);
-                $mail->Subject = 'Account Verification';
-                $mail->Body = 'Congratulations! ' . $first_name . ', your account has been created successfully.<br>Your Username: ' . $username . '<br><a href="http://yourdomain.com/verify_account.php?em=' . $email . '&token=' . $token . '">Click here to verify your account</a>';
-                $mail->send();
-                echo "<script>alert('Registration successful');</script>";
-            } catch (Exception $e) {
-                // Log the error but continue
-                error_log("Email sending failed: " . $mail->ErrorInfo);
-            }
 
-            // Redirect to receipt page regardless of email status
-            echo "<script>
-        window.location.href = 'registration-complete.php';
-    </script>";
+            hrms_send_registration_welcome_email($con, $email, $first_name, $username, $token);
+
+            echo "<script>window.location.href = 'registration-complete.php';</script>";
             exit();
-        } else {
-            echo "Error executing statement: " . $stmt->error;
         }
 
     }
@@ -729,6 +647,11 @@ if ($designation_result) {
                         <!-- Nav tabs -->
                         <div class="container-fluid">
                             <h1 class="h3 mb-4 text-gray-800">Add Employees</h1>
+                            <div class="alert alert-info small mb-4" role="alert">
+                                New employees are saved to: <strong><?php echo htmlspecialchars(hrms_db_connection_label()); ?></strong>.
+                                Use the same database as production (Aiven on Render/communik) so data appears with existing employees.
+                                Salary is added separately under <em>Salary → Add Salary</em> (<code>sal</code> table).
+                            </div>
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="card shadow mb-4">

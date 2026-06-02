@@ -3,6 +3,7 @@ ini_set('display_errors', 0);
 error_reporting(E_ALL);
 include('session.php');
 require_once('connection.php');
+require_once dirname(__DIR__) . '/includes/hrms_paths.php';
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 
@@ -442,12 +443,12 @@ $grid_result = mysqli_query($con, $grid_query);
                                                 <button class="btn btn-sm btn-info" onclick="viewDetails(<?php echo $row['id']; ?>)">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                <a href="../generate_id_card.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-success" target="_blank">
+                                                <a href="<?php echo htmlspecialchars(hrms_url('generate_id_card.php?id=' . (int) $row['id'])); ?>" class="btn btn-sm btn-success" target="_blank">
                                                     <i class="fas fa-id-card"></i>
                                                 </a>
                                             </div>
                                             <div class="text-center mb-3">
-                                                <img src="<?php echo !empty($row['profile_pic']) ? 'uploads/profile_pics/' . basename($row['profile_pic']) : 'uploads/profile_pics/default.jpg'; ?>"
+                                                <img src="<?php echo htmlspecialchars(hrms_employee_upload_url($row['profile_pic'] ?? null)); ?>"
                                                     class="profile-img mb-3" alt="Profile Picture">
                                                 <h5 class="card-title mb-1">
                                                     <?php echo htmlspecialchars($row['full_name'] ?? ''); ?>
@@ -530,7 +531,7 @@ $grid_result = mysqli_query($con, $grid_query);
                                     <tr>
                                         <td><?php echo htmlspecialchars($row['eid'] ?? ''); ?></td>
                                         <td class="text-center">
-                                            <img src="<?php echo !empty($row['profile_pic']) ? 'uploads/profile_pics/' . basename($row['profile_pic']) : 'uploads/profile_pics/default.jpg'; ?>"
+                                            <img src="<?php echo htmlspecialchars(hrms_employee_upload_url($row['profile_pic'] ?? null)); ?>"
                                                 class="rounded-circle" style="width: 50px; height: 50px;">
                                         </td>
                                         <td>
@@ -615,7 +616,7 @@ $grid_result = mysqli_query($con, $grid_query);
                                     <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                                         <div class="card h-100">
                                             <div class="card-body text-center">
-                                                <img src="<?php echo !empty($emp['profile_pic']) ? 'uploads/profile_pics/' . basename($emp['profile_pic']) : 'uploads/profile_pics/default.jpg'; ?>"
+                                                <img src="<?php echo htmlspecialchars(hrms_employee_upload_url($emp['profile_pic'] ?? null)); ?>"
                                                     class="rounded-circle mb-3" style="width: 80px; height: 80px;">
                                                 <h6 class="mb-1"><?php echo htmlspecialchars($emp['full_name'] ?? ''); ?></h6>
                                                 <p class="text-muted small">
@@ -653,7 +654,7 @@ $grid_result = mysqli_query($con, $grid_query);
                                             <i class="fas fa-user-graduate mr-2"></i>Trainee
                                         </div>
                                         <div class="card-body text-center">
-                                            <img src="<?php echo !empty($trainee['profile_pic']) ? 'uploads/profile_pics/' . basename($trainee['profile_pic']) : 'uploads/profile_pics/default.jpg'; ?>"
+                                            <img src="<?php echo htmlspecialchars(hrms_employee_upload_url($trainee['profile_pic'] ?? null)); ?>"
                                                 class="rounded-circle mb-3" style="width: 80px; height: 80px;">
                                             <h6 class="mb-1"><?php echo htmlspecialchars($trainee['full_name'] ?? ''); ?></h6>
                                             <p class="text-muted small mb-2">

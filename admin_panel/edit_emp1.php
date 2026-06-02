@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             mysqli_stmt_execute($stmt);
         }
 
-        echo "<script>alert('Employee details updated successfully!'); window.location.href='view_emp.php';</script>";
+        echo "<script>alert('Employee details updated successfully!'); window.location.href='view_emp1.php';</script>";
     } else {
         echo "Error updating record: " . mysqli_error($con);
     }

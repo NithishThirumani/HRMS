@@ -2,9 +2,10 @@
 if (!isset($con) || !($con instanceof mysqli)) {
     require_once __DIR__ . '/session.php';
 }
+require_once dirname(__DIR__) . '/includes/hrms_paths.php';
 
 if (!isset($_SESSION['eid']) || empty($_SESSION['eid'])) {
-    header('Location: /emps/login.php');
+    header('Location: ' . hrms_url('login.php'));
     exit();
 }
 
@@ -22,7 +23,7 @@ if (!isset($user_data) || !is_array($user_data) || empty($user_data['eid'])) {
 }
 
 if (!$user_data) {
-    header('Location: /emps/login.php?error=invalid_user');
+    header('Location: ' . hrms_url('login.php?error=invalid_user'));
     exit();
 }
 
@@ -61,9 +62,9 @@ function isRecommenderOrApprover($con, $emp_numeric_id) {
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/emps/user_panel/index.php">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?php echo htmlspecialchars(hrms_user_panel_url('index.php')); ?>">
             <div class="sidebar-brand-icon">
-                <img src="/emps/user_panel/img/favicon.png" alt="Logo" style="width: 50px; height: 50px;">
+                <img src="<?php echo htmlspecialchars(hrms_user_panel_url('img/favicon.png')); ?>" alt="Logo" style="width: 50px; height: 50px;">
             </div>
             <div class="sidebar-brand-text mx-3">Employee Panel</div>
         </a>
@@ -73,7 +74,7 @@ function isRecommenderOrApprover($con, $emp_numeric_id) {
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item">
-            <a class="nav-link" href="/emps/user_panel/index.php">
+            <a class="nav-link" href="<?php echo htmlspecialchars(hrms_user_panel_url('index.php')); ?>">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
@@ -84,7 +85,7 @@ function isRecommenderOrApprover($con, $emp_numeric_id) {
 
         <!-- Nav Item - Profile -->
         <li class="nav-item">
-            <a class="nav-link" href="/emps/user_panel/Manage_profile.php">
+            <a class="nav-link" href="<?php echo htmlspecialchars(hrms_user_panel_url('Manage_profile.php')); ?>">
                 <i class="fas fa-fw fa-user"></i>
                 <span>My Profile</span>
             </a>
@@ -99,11 +100,11 @@ function isRecommenderOrApprover($con, $emp_numeric_id) {
             </a>
             <div id="collapseLeave" class="collapse" aria-labelledby="headingLeave" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="/emps/user_panel/leave_management/dashboard.php">Leaves</a>
-                    <a class="collapse-item" href="/emps/user_panel/leave_management/apply.php">Apply Leave</a>
-                    <a class="collapse-item" href="/emps/user_panel/leave_management/leave_history.php">Leave History</a>
+                    <a class="collapse-item" href="<?php echo htmlspecialchars(hrms_user_panel_url('leave_management/dashboard.php')); ?>">Leaves</a>
+                    <a class="collapse-item" href="<?php echo htmlspecialchars(hrms_user_panel_url('leave_management/apply.php')); ?>">Apply Leave</a>
+                    <a class="collapse-item" href="<?php echo htmlspecialchars(hrms_user_panel_url('leave_management/leave_history.php')); ?>">Leave History</a>
                     <?php if (isRecommenderOrApprover($con, $emp_numeric_id)): ?>
-                        <a class="collapse-item" href="/emps/user_panel/leave_management/recommender.php">Recommender</a>
+                        <a class="collapse-item" href="<?php echo htmlspecialchars(hrms_user_panel_url('leave_management/recommender.php')); ?>">Recommender</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -111,7 +112,7 @@ function isRecommenderOrApprover($con, $emp_numeric_id) {
 
         <!-- Nav Item - Salary -->
         <li class="nav-item">
-            <a class="nav-link" href="/emps/user_panel/view_payslip.php">
+            <a class="nav-link" href="<?php echo htmlspecialchars(hrms_user_panel_url('view_payslip.php')); ?>">
                 <i class="fas fa-fw fa-money-bill-wave"></i>
                 <span>My Payslips</span>
             </a>
@@ -126,8 +127,8 @@ function isRecommenderOrApprover($con, $emp_numeric_id) {
             </a>
             <div id="collapseDocuments" class="collapse" aria-labelledby="headingDocuments" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="/emps/esignature/index.php">My Documents</a>
-                    <a class="collapse-item" href="/emps/esignature/pending.php">Pending Signatures</a>
+                    <a class="collapse-item" href="<?php echo htmlspecialchars(hrms_url('esignature/index.php')); ?>">My Documents</a>
+                    <a class="collapse-item" href="<?php echo htmlspecialchars(hrms_url('esignature/pending.php')); ?>">Pending Signatures</a>
                 </div>
             </div>
         </li>
@@ -141,16 +142,16 @@ function isRecommenderOrApprover($con, $emp_numeric_id) {
             </a>
             <div id="collapseAppraisal" class="collapse" aria-labelledby="headingAppraisal" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="/emps/user_panel/appraisal/current_appraisal.php">Current Appraisal</a>
-                    <a class="collapse-item" href="/emps/user_panel/appraisal/appraisal_history.php">Appraisal History</a>
-                    <a class="collapse-item" href="/emps/user_panel/appraisal/goals.php">Goals</a>
+                    <a class="collapse-item" href="<?php echo htmlspecialchars(hrms_user_panel_url('appraisal/current_appraisal.php')); ?>">Current Appraisal</a>
+                    <a class="collapse-item" href="<?php echo htmlspecialchars(hrms_user_panel_url('appraisal/appraisal_history.php')); ?>">Appraisal History</a>
+                    <a class="collapse-item" href="<?php echo htmlspecialchars(hrms_user_panel_url('appraisal/goals.php')); ?>">Goals</a>
                 </div>
             </div>
         </li>
 
         <!-- Nav Item - Feedback -->
         <li class="nav-item">
-            <a class="nav-link" href="/emps/views/feedback/submit_feedback.php">
+            <a class="nav-link" href="<?php echo htmlspecialchars(hrms_url('views/feedback/submit_feedback.php')); ?>">
                 <i class="fas fa-fw fa-comment"></i>
                 <span>Submit Feedback</span>
             </a>
@@ -238,7 +239,7 @@ function isRecommenderOrApprover($con, $emp_numeric_id) {
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
                             <i class="fas fa-times mr-1"></i>Cancel
                         </button>
-                        <a href="/emps/user_panel/logout.php" class="btn btn-danger">
+                        <a href="<?php echo htmlspecialchars(hrms_user_panel_url('logout.php')); ?>" class="btn btn-danger">
                             <i class="fas fa-sign-out-alt mr-1"></i>Logout
                         </a>
                     </div>

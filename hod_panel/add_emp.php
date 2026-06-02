@@ -1,6 +1,7 @@
 <?php
 include('session.php');
 include('connection.php');
+require_once dirname(__DIR__) . '/includes/employee_registration_helpers.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 
@@ -24,9 +25,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) { // Chan
     $first_name = mysqli_real_escape_string($con, $_POST['fn']);
     $last_name = mysqli_real_escape_string($con, $_POST['ln']);
     $full_name = $first_name . " " . $last_name;
-    $email = mysqli_real_escape_string($con, $_POST['em']);
+    $email = hrms_normalize_email($_POST['em'] ?? '');
+    $visa_number_precheck = trim($_POST['visa_number'] ?? '');
+    $passport_number_precheck = trim($_POST['passport_number'] ?? '');
+    $precheck_error = hrms_registration_precheck($con, $email, $visa_number_precheck, $passport_number_precheck);
+    if ($precheck_error !== null) {
+        hrms_registration_fail($precheck_error);
+    }
     $password = mysqli_real_escape_string($con, $_POST['ps']);
-    $username = explode("@", $email)[0];
+    $username = explode('@', $email)[0];
 
 
     // Personal Details
@@ -130,34 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) { // Chan
     $passportDoc = uploadFile($_FILES["passport_doc"], $uploadDirs['passport_doc'], "passport");
 
 
-    // Check if email already exists
-    $sql_check_email = "SELECT * FROM employees WHERE email = '$email'";
-    $result_check_email = mysqli_query($con, $sql_check_email);
-
-    if (mysqli_num_rows($result_check_email) > 0) {
-        echo "<script>alert('Error: User with this email already exists');</script>";
-        echo "<script>window.location.replace('$_SERVER[PHP_SELF]');</script>";
-        exit();
-    } else {
-        // Insert into employees table
-        $sql_eid = "SELECT MAX(CAST(SUBSTRING(eid, 4) AS UNSIGNED)) AS max_eid FROM employees";
-        $result_eid = mysqli_query($con, $sql_eid);
-        $row_eid = mysqli_fetch_assoc($result_eid);
-        $max_eid = $row_eid['max_eid'];
-        $new_eid = 'CME0' . str_pad(($max_eid + 1), 3, "0", STR_PAD_LEFT);
-
-        // Ensure uniqueness by checking if the generated EID already exists
-        while (true) {
-            $check_eid = "SELECT eid FROM employees WHERE eid = '$new_eid'";
-            $result_check = mysqli_query($con, $check_eid);
-            if (mysqli_num_rows($result_check) == 0) {
-                break;
-            }
-            // If EID exists, increment and try again
-            $max_eid++;
-            $new_eid = 'CME' . str_pad($max_eid, 3, "0", STR_PAD_LEFT);
-        }
-
+    $new_eid = hrms_generate_next_eid($con);
 
 $dol = null; // Set default value to null for new employees
 
@@ -283,37 +263,32 @@ if (empty($_POST['labour_card_end_date'])) {
             );
             
             
-            if ($stmt->execute()) {
-    // After successful employee insertion
-    $emp_sql = "INSERT INTO emp_login (emp_id, user_name, password, status) 
-        VALUES (?, ?, ?, 'active')";
-    $emp_stmt = $con->prepare($emp_sql);
-    $emp_stmt->bind_param("sss", $new_eid, $username, $hashed_password); // Use hashed_password instead of password
-    $emp_stmt->execute();
-            
-          
-                // Email notification
-                $mail = new PHPMailer();
-                try {
-                    $mail->isSMTP();
-                    $mail->Host = 'smtp.gmail.com';
-                    $mail->SMTPAuth = true;
-                    $mail->Username = 'youremail@gmail.com';
-                    $mail->Password = 'yourpassword';
-                    $mail->SMTPSecure = 'ssl';
-                    $mail->Port = 465;
-                    $mail->setFrom('youremail@gmail.com', 'Your Name');
-                    $mail->addAddress($email, $first_name);
-                    $mail->isHTML(true);
-                    $mail->Subject = 'Account Verification';
-                    $mail->Body = 'Congratulations! ' . $first_name . ', your account has been created successfully.<br>Your Username: ' . $username . '<br><a href="http://yourdomain.com/verify_account.php?em=' . $email . '&token=' . $token . '">Click here to verify your account</a>';
-                    $mail->send();
-                    echo "<script>alert('Registration successful');</script>";
-                } catch (Exception $e) {
-                    echo "Email could not be sent. Mailer Error: {$mail->ErrorInfo}";
-                }
-            } else {
-                echo "Error executing statement: " . $stmt->error;
+            mysqli_begin_transaction($con);
+            $saved = false;
+
+            if (!$stmt->execute()) {
+                mysqli_rollback($con);
+                hrms_registration_fail(hrms_registration_duplicate_message($con, $stmt->errno, $stmt->error));
+            }
+
+            $emp_sql = "INSERT INTO emp_login (emp_id, user_name, email, password, status) 
+                VALUES (?, ?, ?, ?, 'active')";
+            $emp_stmt = $con->prepare($emp_sql);
+            if (!$emp_stmt || !$emp_stmt->bind_param('ssss', $new_eid, $username, $email, $hashed_password) || !$emp_stmt->execute()) {
+                $err = $emp_stmt ? $emp_stmt->error : $con->error;
+                $errno = $emp_stmt ? $emp_stmt->errno : $con->errno;
+                mysqli_rollback($con);
+                hrms_registration_fail(hrms_registration_duplicate_message($con, $errno, $err));
+            }
+            $emp_stmt->close();
+
+            mysqli_commit($con);
+            $saved = true;
+
+            if ($saved) {
+                hrms_send_registration_welcome_email($con, $email, $first_name, $username, $token);
+                echo "<script>alert('Registration successful'); window.location.replace('" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "');</script>";
+                exit();
             }
         } else {
             echo "Error in preparing statement: " . $con->error;
@@ -324,11 +299,6 @@ if (empty($_POST['labour_card_end_date'])) {
         // $insert_employee_query = "INSERT INTO emp_login (user_name, password) VALUES ('$username', '$password')";
 // if (mysqli_query($con, $insert_employee_query)) {
 
-
-
-
-
-    }
 }
 
 

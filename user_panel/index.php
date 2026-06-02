@@ -736,13 +736,13 @@ if (!$user_name) {
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="/emps/user_panel/logout.php">Logout</a>
+                    <a class="btn btn-success" href="<?php echo htmlspecialchars(hrms_user_panel_url('logout.php')); ?>">Logout</a>
                 </div>
             </div>
         </div>
     </div>
     <!-- Add this form right after the logout modal -->
-    <form id="logout-form" action="/emps/user_panel/logout.php" method="POST" style="display: none;">
+    <form id="logout-form" action="<?php echo htmlspecialchars(hrms_user_panel_url('logout.php')); ?>" method="POST" style="display: none;">
     </form>
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>

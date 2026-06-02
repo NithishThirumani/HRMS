@@ -109,7 +109,7 @@ $result = mysqli_query($con, $query);
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="/emps/user_panel/logout.php">Logout</a>
+                    <a class="btn btn-success" href="<?php echo htmlspecialchars(hrms_user_panel_url('logout.php')); ?>">Logout</a>
                 </div>
             </div>
         </div>

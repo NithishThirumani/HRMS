@@ -1,6 +1,7 @@
 <?php
 include('session.php');
 include('connection.php');
+require_once dirname(__DIR__) . '/includes/hrms_paths.php';
 
 if (!isset($_GET['id'])) {
     die("Employee ID not provided.");
@@ -164,9 +165,10 @@ if (!$employee) {
                 <div class="col-auto">
                     <div class="profile-pic-container">
 
-                        <img src="uploads/profile_pics/<?= basename($employee['profile_pic']) ?>" class="profile-pic"
+                        <?php $profileImgUrl = hrms_employee_upload_url($employee['profile_pic'] ?? null); ?>
+                        <img src="<?= htmlspecialchars($profileImgUrl) ?>" class="profile-pic"
                             id="profilePic"
-                            data-original-src="uploads/profile_pics/<?= basename($employee['profile_pic']) ?>"
+                            data-original-src="<?= htmlspecialchars($profileImgUrl) ?>"
                             alt="Profile Picture">
                         <div class="edit-pic-overlay" onclick="$('#profilePicInput').click();">
                             <i class="fas fa-camera"></i>

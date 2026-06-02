@@ -61,10 +61,10 @@ $result = mysqli_query($con, $query);
                                 <td><?php echo $row['contact']; ?></td>
                                 <td><?php echo date('d M Y', strtotime($row['doj'])); ?></td>
                                 <td>
-                                    <a href="view_emp.php?id=<?php echo $row['id']; ?>" class="btn btn-info btn-sm">
+                                    <a href="view_emp1.php" class="btn btn-info btn-sm">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="edit_emp.php?id=<?php echo $row['id']; ?>" class="btn btn-primary btn-sm">
+                                    <a href="edit_employee.php?id=<?php echo (int) $row['id']; ?>" class="btn btn-primary btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                 </td>
