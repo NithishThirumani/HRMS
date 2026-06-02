@@ -55,22 +55,28 @@ function Invoke-AivenDockerMysql {
     )
     $prevEap = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
+    $dockerVolume = $importFile -replace '\\', '/'
     try {
         if ($ImportFile) {
-            docker run --rm -v "${importFile}:/import/emps.sql:ro" mysql:8.0 mysql `
+            $out = docker run --rm -v "${dockerVolume}:/import/emps.sql:ro" mysql:8.0 mysql `
                 -h $AivenHost -P $AivenPort -u $AivenUser "-p$AivenPassword" --ssl-mode=REQUIRED $AivenDatabase `
-                -e "source /import/emps.sql" 2>&1 | Out-Null
+                -e "source /import/emps.sql" 2>&1
+            $exitCode = $LASTEXITCODE
         } elseif ($StdinSql -ne "") {
-            $StdinSql | docker run --rm -i mysql:8.0 mysql `
-                -h $AivenHost -P $AivenPort -u $AivenUser "-p$AivenPassword" --ssl-mode=REQUIRED $AivenDatabase 2>&1 | Out-Null
+            $out = $StdinSql | docker run --rm -i mysql:8.0 mysql `
+                -h $AivenHost -P $AivenPort -u $AivenUser "-p$AivenPassword" --ssl-mode=REQUIRED $AivenDatabase 2>&1
+            $exitCode = $LASTEXITCODE
         } else {
-            $raw = docker run --rm mysql:8.0 mysql `
+            $out = docker run --rm mysql:8.0 mysql `
                 -h $AivenHost -P $AivenPort -u $AivenUser "-p$AivenPassword" --ssl-mode=REQUIRED -N $AivenDatabase `
                 -e $Query 2>&1
-            return @($raw | Where-Object { $_ -is [string] })
+            $exitCode = $LASTEXITCODE
+            return @($out | Where-Object { $_ -is [string] })
         }
-        if ($LASTEXITCODE -ne 0) {
-            throw "Aiven mysql command failed (exit code $LASTEXITCODE)."
+        $text = @($out | ForEach-Object { if ($_ -is [string]) { $_ } else { $_.ToString() } })
+        $sqlErrors = $text | Where-Object { $_ -match 'ERROR \d+' }
+        if ($exitCode -ne 0 -or $sqlErrors.Count -gt 0) {
+            throw "Aiven mysql failed (exit $exitCode):`n$($text -join "`n")"
         }
     } finally {
         $ErrorActionPreference = $prevEap
