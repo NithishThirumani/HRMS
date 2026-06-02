@@ -47,6 +47,36 @@ if (-not $AivenHost -or -not $AivenUser -or -not $AivenPassword) {
     exit 1
 }
 
+function Invoke-AivenDockerMysql {
+    param(
+        [string]$Query = "",
+        [string]$StdinSql = "",
+        [switch]$ImportFile
+    )
+    $prevEap = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        if ($ImportFile) {
+            docker run --rm -v "${importFile}:/import/emps.sql:ro" mysql:8.0 mysql `
+                -h $AivenHost -P $AivenPort -u $AivenUser "-p$AivenPassword" --ssl-mode=REQUIRED $AivenDatabase `
+                -e "source /import/emps.sql" 2>&1 | Out-Null
+        } elseif ($StdinSql -ne "") {
+            $StdinSql | docker run --rm -i mysql:8.0 mysql `
+                -h $AivenHost -P $AivenPort -u $AivenUser "-p$AivenPassword" --ssl-mode=REQUIRED $AivenDatabase 2>&1 | Out-Null
+        } else {
+            $raw = docker run --rm mysql:8.0 mysql `
+                -h $AivenHost -P $AivenPort -u $AivenUser "-p$AivenPassword" --ssl-mode=REQUIRED -N $AivenDatabase `
+                -e $Query 2>&1
+            return @($raw | Where-Object { $_ -is [string] })
+        }
+        if ($LASTEXITCODE -ne 0) {
+            throw "Aiven mysql command failed (exit code $LASTEXITCODE)."
+        }
+    } finally {
+        $ErrorActionPreference = $prevEap
+    }
+}
+
 # --- Step 1: Export local database ---
 if (-not $SkipExport) {
     if (Test-Path $exportFile) { Remove-Item $exportFile -Force }
@@ -102,32 +132,20 @@ SET SESSION sql_require_primary_key = 0;
 
 # --- Step 3: Drop all tables in Aiven target DB ---
 Write-Host "Dropping existing tables in Aiven [$AivenDatabase] ..."
-$dropSql = docker run --rm mysql:8.0 mysql `
-    -h $AivenHost -P $AivenPort -u $AivenUser "-p$AivenPassword" --ssl-mode=REQUIRED -N $AivenDatabase `
-    -e "SELECT CONCAT('DROP TABLE IF EXISTS ``', table_name, '``;') FROM information_schema.tables WHERE table_schema='$AivenDatabase';" 2>$null
+$dropSql = Invoke-AivenDockerMysql -Query "SELECT CONCAT('DROP TABLE IF EXISTS ``', table_name, '``;') FROM information_schema.tables WHERE table_schema='$AivenDatabase';"
 
 if ($dropSql) {
-    $script = "SET FOREIGN_KEY_CHECKS=0;`n" + ($dropSql -join "`n") + "`nSET FOREIGN_KEY_CHECKS=1;"
-    $script | docker run --rm -i mysql:8.0 mysql `
-        -h $AivenHost -P $AivenPort -u $AivenUser "-p$AivenPassword" --ssl-mode=REQUIRED $AivenDatabase 2>&1 | Out-Null
+    $dropScript = "SET FOREIGN_KEY_CHECKS=0;`n" + ($dropSql -join "`n") + "`nSET FOREIGN_KEY_CHECKS=1;"
+    Invoke-AivenDockerMysql -StdinSql $dropScript
 }
 
 # --- Step 4: Import ---
 Write-Host "Importing into Aiven (may take 1-3 minutes) ..."
-docker run --rm -v "${importFile}:/import/emps.sql:ro" mysql:8.0 mysql `
-    -h $AivenHost -P $AivenPort -u $AivenUser "-p$AivenPassword" --ssl-mode=REQUIRED $AivenDatabase `
-    -e "source /import/emps.sql"
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Import failed. See message above."
-    exit 1
-}
+Invoke-AivenDockerMysql -ImportFile
 
 # --- Step 5: Verify ---
 Write-Host "Verifying ..."
-docker run --rm mysql:8.0 mysql `
-    -h $AivenHost -P $AivenPort -u $AivenUser "-p$AivenPassword" --ssl-mode=REQUIRED $AivenDatabase `
-    -e "SELECT COUNT(*) AS employees FROM employees; SELECT COUNT(*) AS logins FROM emp_login; SELECT COUNT(*) AS tables_count FROM information_schema.tables WHERE table_schema='$AivenDatabase';"
+Invoke-AivenDockerMysql -Query "SELECT COUNT(*) AS employees FROM employees; SELECT COUNT(*) AS logins FROM emp_login; SELECT COUNT(*) AS tables_count FROM information_schema.tables WHERE table_schema='$AivenDatabase';" | ForEach-Object { Write-Host $_ }
 
 Write-Host ""
 Write-Host "Done. Aiven now matches your local EMPS snapshot."
