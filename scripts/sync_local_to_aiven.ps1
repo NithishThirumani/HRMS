@@ -23,9 +23,10 @@ param(
     [string]$AivenUser = $env:AIVEN_USER,
     [string]$AivenPassword = $env:AIVEN_PASSWORD,
     [string]$AivenDatabase = $(if ($env:AIVEN_DATABASE) { $env:AIVEN_DATABASE } else { "defaultdb" }),
-    [string]$LocalHost = $(if ($env:LOCAL_DB_HOST) { $env:LOCAL_DB_HOST } else { "localhost" }),
+    [string]$LocalHost = $(if ($env:LOCAL_DB_HOST) { $env:LOCAL_DB_HOST } else { "127.0.0.1" }),
+    [string]$LocalPort = $(if ($env:LOCAL_DB_PORT) { $env:LOCAL_DB_PORT } else { "3307" }),
     [string]$LocalUser = $(if ($env:LOCAL_DB_USER) { $env:LOCAL_DB_USER } else { "root" }),
-    [string]$LocalPassword = $(if ($env:LOCAL_DB_PASSWORD) { $env:LOCAL_DB_PASSWORD } else { "Nizam123$" }),
+    [string]$LocalPassword = $(if ($env:LOCAL_DB_PASSWORD) { $env:LOCAL_DB_PASSWORD } else { "hrms_secret" }),
     [string]$LocalDatabase = $(if ($env:LOCAL_DB_NAME) { $env:LOCAL_DB_NAME } else { "EMPS" }),
     [switch]$SkipExport
 )
@@ -48,28 +49,40 @@ if (-not $AivenHost -or -not $AivenUser -or -not $AivenPassword) {
 
 # --- Step 1: Export local database ---
 if (-not $SkipExport) {
-    if (-not $mysqldump) {
-        Write-Error "mysqldump not found. Install XAMPP/MySQL client or use Docker export (see docs/SYNC_LOCAL_TO_AIVEN.md)."
-        exit 1
+    if (Test-Path $exportFile) { Remove-Item $exportFile -Force }
+
+    Write-Host "Exporting local database [$LocalDatabase] from ${LocalHost}:${LocalPort} ..."
+    Write-Host "  Docker EMPS: port 3307, password hrms_secret | XAMPP: port 3306, your root password"
+
+    $dockerDb = docker ps --format "{{.Names}}" 2>$null | Where-Object { $_ -match "hrms.*db" } | Select-Object -First 1
+    if ($dockerDb -and $LocalPort -eq "3307") {
+        Write-Host "  Using Docker container: $dockerDb"
+        docker exec $dockerDb mysqldump -u $LocalUser "-p$LocalPassword" --single-transaction --routines --triggers $LocalDatabase > $exportFile
+    } else {
+        if (-not $mysqldump) {
+            Write-Error "mysqldump not found. Start Docker (hrms-db) or install XAMPP MySQL client."
+            exit 1
+        }
+        $dumpArgs = @(
+            "-h", $LocalHost,
+            "-P", $LocalPort,
+            "-u", $LocalUser,
+            "-p$LocalPassword",
+            "--single-transaction",
+            "--routines",
+            "--triggers",
+            "--result-file=$exportFile",
+            $LocalDatabase
+        )
+        & $mysqldump @dumpArgs 2>&1 | ForEach-Object { Write-Host "  $_" }
     }
 
-    Write-Host "Exporting local database [$LocalDatabase] from $LocalHost ..."
-    # XAMPP / MariaDB 10.x mysqldump does not support --set-gtid-purged
-    $dumpArgs = @(
-        "-h", $LocalHost,
-        "-u", $LocalUser,
-        "-p$LocalPassword",
-        "--single-transaction",
-        "--routines",
-        "--triggers",
-        $LocalDatabase
-    )
-    & $mysqldump @dumpArgs | Set-Content -Path $exportFile -Encoding utf8
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Local mysqldump failed. Check LOCAL_DB_* credentials and that MySQL is running."
+    if (-not (Test-Path $exportFile) -or (Get-Item $exportFile).Length -lt 1000) {
+        Write-Error "Export failed or file too small. Start: docker compose up -d  OR  XAMPP MySQL. Then set LOCAL_DB_PORT (3307 or 3306) and LOCAL_DB_PASSWORD."
         exit 1
     }
-    Write-Host "Saved: $exportFile ($((Get-Item $exportFile).Length) bytes)"
+    $sizeMb = [math]::Round((Get-Item $exportFile).Length / 1MB, 2)
+    Write-Host "Saved: $exportFile ($sizeMb MB)"
 } elseif (-not (Test-Path $exportFile)) {
     Write-Error "SkipExport set but $exportFile does not exist."
     exit 1
