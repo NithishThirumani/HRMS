@@ -501,7 +501,7 @@ echo "<!-- Debug: Found $employee_count employees -->";
                                                             } else {
                                                                 $profile_pic = ltrim($profile_pic, '/');
                                                                 $profile_pic = preg_replace('#^(uploads/profile_pics/)?#', '', $profile_pic);
-                                                                $profile_pic = '/admin_panel/uploads/profile_pics/' . $profile_pic;
+                                                                $profile_pic = '/hr_panel/uploads/profile_pics/' . $profile_pic;
                                                             }
                                                         } else {
                                                             $profile_pic = '/img/undraw_profile.svg';
@@ -567,7 +567,7 @@ echo "<!-- Debug: Found $employee_count employees -->";
                                                             } else {
                                                                 $profile_pic = ltrim($profile_pic, '/');
                                                                 $profile_pic = preg_replace('#^(uploads/profile_pics/)?#', '', $profile_pic);
-                                                                $profile_pic = '/admin_panel/uploads/profile_pics/' . $profile_pic;
+                                                                $profile_pic = '/hr_panel/uploads/profile_pics/' . $profile_pic;
                                                             }
                                                         } else {
                                                             $profile_pic = '/img/undraw_profile.svg';
@@ -636,7 +636,7 @@ echo "<!-- Debug: Found $employee_count employees -->";
                                                             } else {
                                                                 $profile_pic = ltrim($profile_pic, '/');
                                                                 $profile_pic = preg_replace('#^(uploads/profile_pics/)?#', '', $profile_pic);
-                                                                $profile_pic = '/admin_panel/uploads/profile_pics/' . $profile_pic;
+                                                                $profile_pic = '/hr_panel/uploads/profile_pics/' . $profile_pic;
                                                             }
                                                         } else {
                                                             $profile_pic = '/img/undraw_profile.svg';

@@ -310,7 +310,7 @@ $result = mysqli_query($con, $query);
 
                                     </div>
                                     <div class="card-body text-center">
-                                        <img src="<?php echo !empty($row['profile_pic']) ? '/emps/admin_panel/uploads/profile_pics/' . basename($row['profile_pic']) : 'uploads/profile_pics/default.jpg'; ?>"
+                                        <img src="<?php echo !empty($row['profile_pic']) ? '/hod_panel/uploads/profile_pics/' . basename($row['profile_pic']) : '/hod_panel/img/default-avatar.svg'; ?>"
                                             class="profile-img mb-3" alt="Profile Picture">
                                         <h5 class="card-title mb-1"><?php echo htmlspecialchars($row['full_name'] ?? ''); ?>
                                         </h5>
@@ -363,7 +363,7 @@ $result = mysqli_query($con, $query);
                                     <tr>
                                         <td><?php echo htmlspecialchars($row['eid'] ?? ''); ?></td>
                                         <td class="text-center">
-                                            <img src="<?php echo !empty($row['profile_pic']) ? '/emps/admin_panel/uploads/profile_pics/' . basename($row['profile_pic']) : '/emps/admin_panel/uploads/profile_pics/default.jpg'; ?>"
+                                            <img src="<?php echo !empty($row['profile_pic']) ? '/hod_panel/uploads/profile_pics/' . basename($row['profile_pic']) : '/hod_panel/img/default-avatar.svg'; ?>"
                                                 class="rounded-circle" style="width: 50px; height: 50px;">
                                         </td>
                                         <td>
@@ -446,7 +446,7 @@ $result = mysqli_query($con, $query);
                                     <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                                         <div class="card h-100">
                                             <div class="card-body text-center">
-                                                <img src="<?php echo !empty($emp['profile_pic']) ? '/emps/admin_panel/uploads/profile_pics/' . basename($emp['profile_pic']) : '/emps/admin_panel/uploads/profile_pics/default.jpg'; ?>"
+                                                <img src="<?php echo !empty($emp['profile_pic']) ? '/hod_panel/uploads/profile_pics/' . basename($emp['profile_pic']) : '/hod_panel/img/default-avatar.svg'; ?>"
                                                     class="rounded-circle mb-3" style="width: 80px; height: 80px;">
                                                 <h6 class="mb-1"><?php echo htmlspecialchars($emp['full_name'] ?? ''); ?></h6>
                                                 <p class="text-muted small">
