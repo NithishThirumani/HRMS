@@ -30,3 +30,4 @@ Thumbs.db
 
 # Generated Aiven import (may contain data)
 database/emps_aiven.sql
+database/local_export.sql
