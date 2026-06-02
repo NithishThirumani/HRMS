@@ -153,7 +153,7 @@ if (!isset($_SESSION['registration_details'])) {
                     <button onclick="window.print()" class="btn btn-success">
                         <i class="fas fa-print mr-2"></i>Print Receipt
                     </button>
-                    <a href="https://communik.san-solutions.in/login.php" class="btn btn-secondary">
+                    <a href="../login.php" class="btn btn-secondary">
                         <i class="fas fa-arrow-left mr-2"></i>New Registration
                     </a>
                 </div>

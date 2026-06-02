@@ -1,5 +1,7 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/includes/hrms_session.php';
+require_once dirname(__DIR__) . '/includes/hrms_paths.php';
+hrms_start_session('super_admin');
 include('../connection.php');
 
 if (isset($_SESSION['email']) && isset($_SESSION['role']) && $_SESSION['role'] === 'super_admin') {
@@ -19,15 +21,6 @@ if (isset($_SESSION['email']) && isset($_SESSION['role']) && $_SESSION['role'] =
     mysqli_stmt_execute($stmt);
 }
 
-// Destroy all session data
-session_destroy();
-
-// Clear session cookies
-if (isset($_COOKIE[session_name()])) {
-    setcookie(session_name(), '', time()-3600, '/');
-}
-
-// Redirect to login page
-header("Location: ../login.php");
-exit();
+hrms_destroy_session('super_admin');
+hrms_redirect('login.php');
 ?> 

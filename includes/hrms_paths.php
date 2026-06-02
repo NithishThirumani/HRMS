@@ -27,6 +27,11 @@ if (!function_exists('hrms_base_path')) {
             return '';
         }
 
+        // Shared hosting: app under /emps/ (e.g. communik.san-solutions.in/emps/)
+        if ($host !== '' && (str_contains($host, 'san-solutions.in') || str_contains($host, 'communik'))) {
+            return '/emps';
+        }
+
         return '/emps';
     }
 }

@@ -710,7 +710,7 @@ if (isset($_POST['export_excel'])) {
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="https://communik.san-solutions.in/login.php">Logout</a>
+                    <a class="btn btn-success" href="logout.php">Logout</a>
                 </div>
             </div>
         </div>
