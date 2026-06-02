@@ -40,6 +40,8 @@ if (!function_exists('hrms_get_db_connection')) {
             throw new Exception('Error setting charset: ' . mysqli_error($connection));
         }
 
+        mysqli_query($connection, 'SET collation_connection = utf8mb4_unicode_ci');
+
         return $connection;
     }
 }
